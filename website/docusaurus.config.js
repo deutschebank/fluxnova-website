@@ -103,7 +103,7 @@ module.exports = {
             },
             {
               label: 'Contact',
-              to: 'https://github.com/finos/fluxnova-bpm-platform/discussions'
+              to: '/contact-us'
             },
           ]
         }
@@ -188,14 +188,14 @@ module.exports = {
             },
             {
               label: 'Contact Us',
-              to: 'https://github.com/finos/fluxnova-bpm-platform/discussions'
+              to: '/contact-us'
             }
           ]
         },
       ]
     },
   },
-  plugins: ['docusaurus-plugin-sass'],
+  plugins: ['docusaurus-plugin-sass', './plugins/webpack-filter.js'],
   presets: [
     [
       '@docusaurus/preset-classic',
