@@ -113,14 +113,14 @@ export const AboutUsConfig = {
         </q>{" "}
         <strong> - Stefan Schaffer, Deutsche Bank</strong>
       </p>,
-      <p>
-        <q className="quotes">
-          BMO recognizes that collaboration is essential to the future of
-          finance. Fluxnova provides the open, scalable, and secure foundation
-          needed to support client trust and regulatory alignment.
-        </q>{" "}
-        <strong> - Kim Prado, BMO</strong>
-      </p>,
+      // <p>
+      //   <q className="quotes">
+      //     BMO recognizes that collaboration is essential to the future of
+      //     finance. Fluxnova provides the open, scalable, and secure foundation
+      //     needed to support client trust and regulatory alignment.
+      //   </q>{" "}
+      //   <strong> - Kim Prado, BMO</strong>
+      // </p>,
       <p>
         <q className="quotes">
           At Capital One, open source powers our ability to accelerate
