@@ -212,7 +212,7 @@ export const contributeConfig = {
     className: "bg-gray color-charcoal display-block",
 
     elements: [
-      <h3>Have you explore our rich documentation?</h3>,
+      <h3>Have you explored our rich documentation?</h3>,
       <p>
         Fluxnova documentation helps you move through each stage confidently.
       </p>,

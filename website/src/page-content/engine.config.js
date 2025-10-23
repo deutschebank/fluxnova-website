@@ -43,7 +43,7 @@ export const engineConfig = {
       </h2>,
       <div style={{ textAlign: "center" }}>
         <button className="primary">
-          <Link to="https://demo-fluxnova.finos.org/fluxnova/app/welcome/default/#!/login">
+          <Link to="https://demo.fluxnova.finos.org/fluxnova/app/welcome/default/#!/login">
             View Demo
           </Link>
         </button>
