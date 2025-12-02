@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "@docusaurus/Link";
-import APIIcon from "/img/icons/api.svg";
 import CodeBlock from "../components/blocks/code-block";
+import APIIcon from "/img/icons/api.svg";
 
 export const APIsConfig = {
   hero: {
