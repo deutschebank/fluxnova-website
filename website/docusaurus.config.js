@@ -56,6 +56,10 @@ module.exports = {
               label: 'Governance',
               to: '/governance'
             },
+            {
+              label: 'Releases',
+              to: '/releases'
+            }
           ]
         },
         {
@@ -81,7 +85,7 @@ module.exports = {
             },
             {
               label: 'API Spec',
-              to: '/docs/category/fluxnova'
+              to: '/docs/category/api-spec'
             }
           ]
         },
@@ -151,6 +155,10 @@ module.exports = {
               label: 'Governance',
               to: '/governance'
             },
+            {
+              label: 'Releases',
+              to: '/releases'
+            }
           ]
         },
         {
@@ -187,7 +195,7 @@ module.exports = {
             },
             {
               label: 'API Spec',
-              to: '/docs/category/fluxnova'
+              to: '/docs/category/api-spec'
             }
           ]
         },
