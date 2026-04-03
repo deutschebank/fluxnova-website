@@ -72,7 +72,7 @@ export const HomeConfig = {
           </button>
           ,
           <button className="secondary">
-            <Link to="https://github.com/finos/fluxnova-modeler/discussions">
+            <Link to="https://github.com/finos/fluxnova-bpm-platform/discussions">
               Join the Community
             </Link>
           </button>
