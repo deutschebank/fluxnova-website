@@ -14,8 +14,12 @@ module.exports = {
   baseUrl: '/',
   onBrokenAnchors: "throw",
   onBrokenLinks: "throw",
-  onBrokenMarkdownLinks: "throw",
   onDuplicateRoutes: "throw",
+  markdown: {
+    hooks: {
+      onBrokenMarkdownLinks: "throw",
+    },
+  },
   trailingSlash: false,
   favicon: 'img/favicon/fluxnova.ico',
   projectName: `FINOS ${projectName}`,

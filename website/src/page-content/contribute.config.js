@@ -89,7 +89,7 @@ export const contributeConfig = {
       <ul>
         <li>
           Select an issue that you would like to work on. Have a look at our{" "}
-          <a href="https://github.com/orgs/finos/projects/116" target="_blank">
+          <a href="https://github.com/orgs/finos/projects/128" target="_blank">
             Project Board
           </a>{" "}
           or the issues lists for the individual projects, e.g.{" "}
@@ -104,7 +104,7 @@ export const contributeConfig = {
         </li>
         <li>
           <a
-            href="https://github.com/finos/flowave-bpm-platform/fork"
+            href="https://github.com/finos/fluxnova-bpm-platform/fork"
             target="_blank"
           >
             Create a fork
@@ -125,7 +125,7 @@ export const contributeConfig = {
         </li>
         <li>
           <a
-            href="https://github.com/finos/flowave-bpm-platform/pulls"
+            href="https://github.com/finos/fluxnova-bpm-platform/pulls"
             target="_blank"
           >
             Create a pull request
