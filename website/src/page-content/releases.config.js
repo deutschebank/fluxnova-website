@@ -27,7 +27,7 @@ export const releasesConfig = {
         </div>
         <div className="grid-row">
           <div>2.0</div>
-          <div>March 27, 2026</div>
+          <div>April 6th, 2026</div>
           <a href="/docs/releases/v2.0.0">Notes</a>
         </div>
       </div>,
