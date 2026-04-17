@@ -34,7 +34,8 @@
   "devDependencies": {
     "eslint": "^9.0.0",
     "eslint-plugin-react": "^7.23.2",
-    "husky": "^9.1.7"
+    "husky": "^9.1.7",
+    "webpack": "5.105.4"
   },
   "browserslist": {
     "production": [
@@ -52,7 +53,6 @@
     "node": ">=18.0"
   },
   "overrides": {
-    "electron-to-chromium": "1.5.267",
-    "webpack": "5.97.1"
+    "electron-to-chromium": "1.5.267"
   }
 }
