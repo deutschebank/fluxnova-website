@@ -52,6 +52,7 @@
     "node": ">=18.0"
   },
   "overrides": {
-    "electron-to-chromium": "1.5.267"
+    "electron-to-chromium": "1.5.267",
+    "webpack": "5.97.1"
   }
 }
