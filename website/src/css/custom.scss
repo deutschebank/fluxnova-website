@@ -28,6 +28,7 @@
   --ifm-heading-font-family: "Quicksand", sans-serif;
   --ifm-background-color: #f0f0f0;
   --ifm-background-gray: #e5e5e5;
+  --ifm-dark-gray: #d9d9d9;
   --ifm-button-color: #00ce97;
   --ifm-fs-seminormal: 1em;
   --ifm-fs-normal: 1.25em;
@@ -504,4 +505,44 @@ span {
 
 hr {
   margin: 0;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-auto-flow: row;
+  gap: 0;
+  border: 1px solid var(--ifm-background-color);
+  border-radius: 4px;
+  overflow: hidden;
+  a {
+    color: var(--ifm-color-primary);
+    text-decoration: none;
+  }
+}
+
+.grid-header {
+  display: grid;
+  grid-template-columns: inherit;
+  grid-column: 1 / -1;
+  background-color: var(--ifm-color-charcoal);
+  color: white;
+  font-weight: 600;
+  padding: 16px;
+}
+
+.grid-row {
+  display: grid;
+  grid-template-columns: inherit;
+  grid-column: 1 / -1;
+  background-color: var(--ifm-background-gray);
+  padding: 16px;
+
+  &.accent {
+    background-color: var(--ifm-dark-gray);
+  }
+
+  &:hover {
+    background-color: var(--ifm-transparent-primary);
+  }
 }
