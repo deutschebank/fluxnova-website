@@ -18,6 +18,9 @@ _NOTE:_ Commits and pull requests to FINOS repositories will only be accepted fr
 
 *Need an ICLA? Unsure if you are covered under an existing CCLA? Email [help@finos.org](mailto:help@finos.org)*
 
+## NOTE: 
+### For information on running website locally, please refer to the [README](./website/README.md) in the website folder.
+
 ## License
 
 Copyright 2025 FINOS

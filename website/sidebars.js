@@ -27,6 +27,10 @@ export default {
                     items: [
                         {
                             type: 'doc',
+                            id: 'releases/v1.0.0'
+                        },
+                        {
+                            type: 'doc',
                             id: 'releases/v2.0.0'
                         }
                     ]

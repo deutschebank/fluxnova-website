@@ -1,5 +1,6 @@
 import ReleasesIcon from "/img/icons/releases.svg";
 import React from "react";
+import Link from "@docusaurus/Link";
 
 export const releasesConfig = {
   sectionOne: {
@@ -19,17 +20,13 @@ export const releasesConfig = {
   sectionTwo: {
     className: "bg-white color-charcoal display-block",
     elements: [
-      <div className="grid">
-        <div className="grid-header">
-          <div>Version</div>
-          <div>Release Date</div>
-          <div>Release Notes</div>
-        </div>
-        <div className="grid-row">
-          <div>2.0</div>
-          <div>April 6th, 2026</div>
-          <a href="/docs/releases/v2.0.0">Notes</a>
-        </div>
+      <div style={{ textAlign: "center", padding: "2rem 0" }}>
+        <h2>View Release Notes on Github</h2>
+        <button className="primary">
+          <Link to="https://github.com/finos/fluxnova-bpm-platform/releases">
+            Release Notes
+          </Link>
+        </button>
       </div>,
     ],
   },

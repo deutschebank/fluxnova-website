@@ -11,7 +11,7 @@ export const MonitoringConfig = {
     elements: [
       <h1>Real-Time Visibility for Mission-Critical Processes</h1>,
       <p className="heroDescription">
-        Fluxnova puts everything you need in one view. Get real-time insights,
+        Fluxnova Control Center puts everything you need in one view. Get real-time insights,
         take actions, and keep your business-critical processes running
         smoothly—without the chaos.
       </p>,
@@ -52,7 +52,7 @@ export const MonitoringConfig = {
       <p>LISTS</p>,
       <h2>Segmented Views</h2>,
       <p>
-        Fluxnova's list pages give you quick access to essential data--organized
+        Fluxnova Control Center's list pages give you quick access to essential data--organized
         by:
       </p>,
       <ul>
@@ -75,7 +75,7 @@ export const MonitoringConfig = {
       <p>INSIGHTS</p>,
       <h2>Smarter Monitoring Starts Here</h2>,
       <p>
-        Fluxnova Monitoring gives you the power to both analyze and resolve
+        Fluxnova Control Center Monitoring gives you the power to both analyze and resolve
         process issues. Identify bottlenecks and incidents at a glance with
         intuitive process model overlays. Fix issues on the fly and apply the
         latest improvements—no downtime required.

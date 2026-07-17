@@ -22,6 +22,8 @@ Running Docusaurus locally is very simple, just follow these steps:
 
 The command should open your browser and point to `http://localhost:3000`.
 
+NOTE: In order to successfully run locally, you must follow the steps in the [docs/API docs](#docsapi-docs) section to generate the API documentation.
+
 ## Git commit errors
 
 - If you run into prettier formatting errors when committing, navigate to the `website` folder and run `npm run format`.
