@@ -3,7 +3,7 @@
   "info": {
     "title": "Fluxnova Platform REST API",
     "description": "OpenApi Spec for Fluxnova Platform REST API.",
-    "version": "1.0.0-SNAPSHOT",
+    "version": "3.0.0",
     "license": {
       "name": "Apache License 2.0",
       "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
@@ -65,6 +65,9 @@
       "name": "Batch"
     },
     {
+      "name": "Bulk Task"
+    },
+    {
       "name": "Condition"
     },
     {
@@ -110,7 +113,7 @@
       "name": "Historic Decision Requirements Definition"
     },
     {
-      "name": "Historic Detail API"
+      "name": "Historic Detail"
     },
     {
       "name": "Historic External Task Log"
@@ -691,17 +694,17 @@
                       "links": [
                         {
                           "method": "GET",
-                          "href\"": "http://localhost:8080/engine-rest/authorization/anAuthorizationId",
+                          "href": "http://localhost:8080/engine-rest/authorization/anAuthorizationId",
                           "rel": "self"
                         },
                         {
                           "method": "PUT",
-                          "href\"": "http://localhost:8080/engine-rest/authorization/anAuthorizationId",
+                          "href": "http://localhost:8080/engine-rest/authorization/anAuthorizationId",
                           "rel": "update"
                         },
                         {
                           "method": "DELETE",
-                          "href\"": "http://localhost:8080/engine-rest/authorization/anAuthorizationId",
+                          "href": "http://localhost:8080/engine-rest/authorization/anAuthorizationId",
                           "rel": "delete"
                         }
                       ]
@@ -1759,6 +1762,572 @@
               }
             },
             "description": "Returned if the batch cannot be suspended or activated.\nSee the [Introduction](https://docs.fluxnova.finos.org/manual/develop/reference/rest/overview/#error-handling) for the error response format."
+          }
+        }
+      }
+    },
+    "/bulk/task/assign": {
+      "post": {
+        "operationId": "bulkAssignTasks",
+        "tags": [
+          "Bulk Task"
+        ],
+        "summary": "Assign tasks",
+        "description": "Assign all tasks to specific user",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssignTasksDto"
+              },
+              "examples": {
+                "example-1": {
+                  "summary": "POST /bulk/task/assign",
+                  "value": {
+                    "taskIds": [
+                      "0eb066f5-7c34-11ef-b497-9e2bc863dfee",
+                      "0eab5dde-7c34-11ef-b497-9e2bc863dfee"
+                    ],
+                    "userId": "demo"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TaskUpdateResponse"
+                  }
+                },
+                "examples": {
+                  "example-1": {
+                    "value": [
+                      {
+                        "status": "SUCCESS",
+                        "taskId": "0eb066f5-7c34-11ef-b497-9e2bc863dfee",
+                        "errorMessage": null
+                      },
+                      {
+                        "status": "SUCCESS",
+                        "taskId": "0eab5dde-7c34-11ef-b497-9e2bc863dfee",
+                        "errorMessage": null
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            "description": "Request successful."
+          },
+          "207": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TaskUpdateResponse"
+                  }
+                },
+                "examples": {
+                  "example-1": {
+                    "value": [
+                      {
+                        "status": "FAILURE",
+                        "taskId": "0eb066f5-7c34-11ef-b497-9e2bc863dfee1",
+                        "errorMessage": "Cannot find task with id 0eb066f5-7c34-11ef-b497-9e2bc863dfee1: task is null"
+                      },
+                      {
+                        "status": "SUCCESS",
+                        "taskId": "0eab5dde-7c34-11ef-b497-9e2bc863dfee",
+                        "errorMessage": null
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            "description": "Multi-Status: Indicates that at least one request has failed."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionDto"
+                }
+              }
+            },
+            "description": "Returned if some query parameters are invalid. See the\n[Introduction](https://docs.fluxnova.finos.org/manual/develop/reference/rest/overview/#error-handling) for the error response format."
+          }
+        }
+      }
+    },
+    "/bulk/task/comment/create": {
+      "post": {
+        "operationId": "bulkCreateTaskComments",
+        "tags": [
+          "Bulk Task"
+        ],
+        "summary": "Create list of task comments",
+        "description": "Create a list of task comments.",
+        "requestBody": {
+          "description": "**Note:** Only the `taskId`, `message`, `processInstanceId` properties will be used. Every\nother property passed to this endpoint will be ignored.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCommentsDto"
+              },
+              "examples": {
+                "example-1": {
+                  "summary": "POST `/bulk/task/comment/create`",
+                  "value": [
+                    {
+                      "taskId": "1f7e5f43-3e3c-11ef-ab08-3606d2560f62",
+                      "message": "Comment process instance"
+                    },
+                    {
+                      "taskId": "1f7e5f43-3e3c-11ef-ab08-3606d2560f62",
+                      "processInstanceId": "2f7e5f43-3e3c-11ef-ab08-3606d2560f62",
+                      "message": "Comment process instance"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TaskCreateCommentResponse"
+                  }
+                },
+                "examples": {
+                  "example-1": {
+                    "summary": "Status 200 Response",
+                    "value": [
+                      {
+                        "status": "SUCCESS",
+                        "errorMessage": "null",
+                        "commentInfo": {
+                          "id": "commentId",
+                          "userId": "userId",
+                          "taskId": "aTaskId",
+                          "processInstanceId": "aProcessInstanceId",
+                          "time": "2013-01-02T21:37:03.764+0200",
+                          "message": "message",
+                          "removalTime": "2018-02-10T14:33:19.000+0200",
+                          "rootProcessInstanceId": "aRootProcessInstanceId"
+                        }
+                      },
+                      {
+                        "status": "SUCCESS",
+                        "errorMessage": "null",
+                        "commentInfo": {
+                          "id": "anotherCommentId",
+                          "userId": "anotherUserId",
+                          "taskId": "aTaskId",
+                          "processInstanceId": "aProcessInstanceId",
+                          "time": "2013-02-23T20:37:43.975+0200",
+                          "message": "anotherMessage",
+                          "removalTime": "2018-02-10T14:33:19.000+0200",
+                          "rootProcessInstanceId": "aRootProcessInstanceId"
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            "description": "Request successful."
+          },
+          "207": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TaskCreateCommentResponse"
+                  }
+                },
+                "examples": {
+                  "example-1": {
+                    "summary": "Status 207 Response",
+                    "value": [
+                      {
+                        "status": "FAILURE",
+                        "errorMessage": "Cannot find task with id 0eb066f5-7c34-11ef-b497-9e2bc863dfee1: task is null",
+                        "commentInfo": {
+                          "id": "commentId",
+                          "userId": "userId",
+                          "taskId": "aTaskId",
+                          "processInstanceId": "aProcessInstanceId",
+                          "time": "2013-01-02T21:37:03.764+0200",
+                          "message": "message",
+                          "removalTime": "2018-02-10T14:33:19.000+0200",
+                          "rootProcessInstanceId": "aRootProcessInstanceId"
+                        }
+                      },
+                      {
+                        "status": "SUCCESS",
+                        "errorMessage": "null",
+                        "commentInfo": {
+                          "id": "anotherCommentId",
+                          "userId": "anotherUserId",
+                          "taskId": "aTaskId",
+                          "processInstanceId": "aProcessInstanceId",
+                          "time": "2013-02-23T20:37:43.975+0200",
+                          "message": "anotherMessage",
+                          "removalTime": "2018-02-10T14:33:19.000+0200",
+                          "rootProcessInstanceId": "aRootProcessInstanceId"
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            "description": "Multi-Status: Indicates that at least one request has failed."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionDto"
+                }
+              }
+            },
+            "description": "Returned if some query parameters are invalid, the number of commentDtos exceeds 100.\nSee the [Introduction](https://docs.fluxnova.finos.org/manual/develop/reference/rest/overview/#error-handling) for the error\nresponse format."
+          }
+        }
+      }
+    },
+    "/bulk/task/complete": {
+      "post": {
+        "operationId": "bulkCompleteTasks",
+        "tags": [
+          "Bulk Task"
+        ],
+        "summary": "Complete Tasks",
+        "description": "Completes a list of tasks.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompleteTaskRequestDto"
+              },
+              "examples": {
+                "example-1": {
+                  "summary": "Completing list of tasks with withVariablesInReturn flag set to true",
+                  "value": {
+                    "completeTasksInfo": [
+                      {
+                        "taskId": "f010bd64-96c4-11ef-8966-0205857feb80",
+                        "variables": {
+                          "aVariable": {
+                            "value": "aStringValue",
+                            "type": "String"
+                          },
+                          "anotherVariable": {
+                            "value": true,
+                            "type": "Boolean"
+                          }
+                        }
+                      },
+                      {
+                        "taskId": "ea7d6ebc-96c4-11ef-8966-0205857feb80",
+                        "variables": {
+                          "aVariable": {
+                            "value": "aStringValue",
+                            "type": "String"
+                          },
+                          "anotherVariable": {
+                            "value": true,
+                            "type": "Boolean"
+                          }
+                        }
+                      }
+                    ],
+                    "withVariablesInReturn": true
+                  }
+                },
+                "example-2": {
+                  "summary": "Completing list of tasks with withVariablesInReturn flag set to false",
+                  "value": {
+                    "completeTasksInfo": [
+                      {
+                        "taskId": "f010bd64-96c4-11ef-8966-0205857feb80",
+                        "variables": {
+                          "aVariable": {
+                            "value": "aStringValue",
+                            "type": "String"
+                          },
+                          "anotherVariable": {
+                            "value": true,
+                            "type": "Boolean"
+                          }
+                        }
+                      },
+                      {
+                        "taskId": "ea7d6ebc-96c4-11ef-8966-0205857feb80",
+                        "variables": {
+                          "aVariable": {
+                            "value": "aStringValue",
+                            "type": "String"
+                          },
+                          "anotherVariable": {
+                            "value": true,
+                            "type": "Boolean"
+                          }
+                        }
+                      }
+                    ],
+                    "withVariablesInReturn": false
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TaskCompleteResponseDto"
+                  }
+                },
+                "examples": {
+                  "example-1": {
+                    "value": [
+                      {
+                        "variables": {
+                          "aVariable": {
+                            "value": "aStringValue",
+                            "type": "String"
+                          },
+                          "anotherVariable": {
+                            "value": true,
+                            "type": "Boolean"
+                          }
+                        },
+                        "status": "SUCCESS",
+                        "taskId": "0eb066f5-7c34-11ef-b497-9e2bc863dfee",
+                        "errorMessage": null
+                      },
+                      {
+                        "variables": {
+                          "aVariable": {
+                            "value": "aStringValue",
+                            "type": "String"
+                          },
+                          "anotherVariable": {
+                            "value": true,
+                            "type": "Boolean"
+                          }
+                        },
+                        "status": "SUCCESS",
+                        "taskId": "0eab5dde-7c34-11ef-b497-9e2bc863dfee",
+                        "errorMessage": null
+                      }
+                    ]
+                  },
+                  "example-2": {
+                    "value": [
+                      {
+                        "variables": null,
+                        "status": "SUCCESS",
+                        "taskId": "0eb066f5-7c34-11ef-b497-9e2bc863dfee",
+                        "errorMessage": null
+                      },
+                      {
+                        "variables": null,
+                        "status": "SUCCESS",
+                        "taskId": "0eab5dde-7c34-11ef-b497-9e2bc863dfee",
+                        "errorMessage": null
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            "description": "Request successful."
+          },
+          "207": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TaskCompleteResponseDto"
+                  }
+                },
+                "examples": {
+                  "example-3": {
+                    "value": [
+                      {
+                        "variables": null,
+                        "status": "FAILURE",
+                        "taskId": "0eb066f5-7c34-11ef-b497-9e2bc863dfee1",
+                        "errorMessage": "Cannot find task with id 0eb066f5-7c34-11ef-b497-9e2bc863dfee1: task is null"
+                      },
+                      {
+                        "variables": null,
+                        "status": "SUCCESS",
+                        "taskId": "0eab5dde-7c34-11ef-b497-9e2bc863dfee",
+                        "errorMessage": null
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            "description": "Multi-Status: Indicates that at least one request has failed."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionDto"
+                }
+              }
+            },
+            "description": "Returned if some query parameters are invalid. See the\n[Introduction](https://docs.fluxnova.finos.org/manual/develop/reference/rest/overview/#error-handling) for the error response format."
+          }
+        }
+      }
+    },
+    "/bulk/task/update": {
+      "post": {
+        "operationId": "bulkUpdateTasks",
+        "tags": [
+          "Bulk Task"
+        ],
+        "summary": "Update tasks",
+        "description": "Updates a list of tasks.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaskUpdateDtoRequest"
+              },
+              "examples": {
+                "example-1": {
+                  "summary": "POST /bulk/task/update",
+                  "value": [
+                    {
+                      "id": "taskId1",
+                      "name": "Task 1",
+                      "description": "This task needs to be done urgently",
+                      "priority": 30,
+                      "assignee": "peter",
+                      "owner": "mary",
+                      "delegationState": "PENDING",
+                      "due": "2014-08-30T10:00:00.000+0200",
+                      "followUp": "2014-08-25T10:00:00.000+0200",
+                      "parentTaskId": "parentTaskId1",
+                      "caseInstanceId": "caseInstanceId1",
+                      "tenantId": null
+                    },
+                    {
+                      "id": "taskId2",
+                      "name": "Task 2",
+                      "description": "This task is of medium priority",
+                      "priority": 20,
+                      "assignee": "john",
+                      "owner": "jane",
+                      "delegationState": "RESOLVED",
+                      "due": "2014-09-15T10:00:00.000+0200",
+                      "followUp": "2014-09-10T10:00:00.000+0200",
+                      "parentTaskId": "parentTaskId2",
+                      "caseInstanceId": "caseInstanceId2",
+                      "tenantId": null
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TaskUpdateResponse"
+                  }
+                },
+                "examples": {
+                  "example-1": {
+                    "value": [
+                      {
+                        "status": "SUCCESS",
+                        "taskId": "0eb066f5-7c34-11ef-b497-9e2bc863dfee",
+                        "errorMessage": null
+                      },
+                      {
+                        "status": "SUCCESS",
+                        "taskId": "0eab5dde-7c34-11ef-b497-9e2bc863dfee",
+                        "errorMessage": null
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            "description": "Request successful."
+          },
+          "207": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TaskUpdateResponse"
+                  }
+                },
+                "examples": {
+                  "example-1": {
+                    "value": [
+                      {
+                        "status": "FAILURE",
+                        "taskId": "0eb066f5-7c34-11ef-b497-9e2bc863dfee1",
+                        "errorMessage": "Cannot find task with id 0eb066f5-7c34-11ef-b497-9e2bc863dfee1: task is null"
+                      },
+                      {
+                        "status": "SUCCESS",
+                        "taskId": "0eab5dde-7c34-11ef-b497-9e2bc863dfee",
+                        "errorMessage": null
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            "description": "Multi-Status: Indicates that at least one request has failed."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionDto"
+                }
+              }
+            },
+            "description": "Returned if some query parameters are invalid, the number of taskDtos exceeds 100,\nor there are duplicate task IDs. See the\n[Introduction](https://docs.fluxnova.finos.org/manual/develop/reference/rest/overview/#error-handling) for the error response format."
           }
         }
       }
@@ -4799,6 +5368,111 @@
         }
       }
     },
+    "/deployment/delete": {
+      "post": {
+        "operationId": "deleteDeployments",
+        "tags": [
+          "Deployment"
+        ],
+        "summary": "Delete Deployments",
+        "description": "Deletes a list of deployments by given ids.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteDeploymentsDto"
+              },
+              "examples": {
+                "example-1": {
+                  "summary": "POST /delete",
+                  "value": {
+                    "deploymentIds": [
+                      "deploymentId1",
+                      "deploymentId2"
+                    ],
+                    "skipCustomListeners": true,
+                    "skipIoMappings": true,
+                    "cascade": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DeleteDeploymentResponse"
+                  }
+                },
+                "examples": {
+                  "example-1": {
+                    "summary": "Status 200 Response",
+                    "value": [
+                      {
+                        "status": "SUCCESS",
+                        "errorMessage": "null",
+                        "deploymentId": "aDeploymentId"
+                      },
+                      {
+                        "status": "SUCCESS",
+                        "errorMessage": "null",
+                        "deploymentId": "aDeploymentId"
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            "description": "Request successful."
+          },
+          "207": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DeleteDeploymentResponse"
+                  }
+                },
+                "examples": {
+                  "example-1": {
+                    "summary": "Status 200 Response",
+                    "value": [
+                      {
+                        "status": "FAILURE",
+                        "errorMessage": "Cannot find job with id 0eb066f5-7c34-11ef-b497-9e2dfee1: jobId is null",
+                        "deploymentId": "aDeploymentId"
+                      },
+                      {
+                        "status": "SUCCESS",
+                        "errorMessage": "null",
+                        "deploymentId": "aDeploymentId"
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            "description": "Multi-Status: Indicates that at least one request has failed."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionDto"
+                }
+              }
+            },
+            "description": "Returned if some query parameters are invalid or invalid request. See the\n[Introduction](https://docs.fluxnova.finos.org/manual/develop/reference/rest/overview/#error-handling) for the error response format."
+          }
+        }
+      }
+    },
     "/deployment/registered": {
       "get": {
         "operationId": "getRegisteredDeployments",
@@ -5242,12 +5916,13 @@
     },
     "/engine": {
       "get": {
-        "operationId": "getProcessEngineNames",
+        "operationId": "getProcessEngines",
         "tags": [
           "Engine"
         ],
         "summary": "Get List",
-        "description": "Retrieves the names of all process engines available on your platform.\n**Note**: You cannot prepend `/engine/{name}` to this method.",
+        "description": "Retrieves the names of all process engines available on your platform.\nIf the engine is configured with them the entry also includes\n`displayName`, `group`, and `groupDisplayName`.\n**Note**: You cannot prepend `/engine/{name}` to this method.",
+        "parameters": [],
         "responses": {
           "200": {
             "content": {
@@ -5260,12 +5935,30 @@
                 },
                 "examples": {
                   "example-1": {
+                    "summary": "Default response (name only) without extra configuration",
                     "value": [
                       {
                         "name": "default"
                       },
                       {
                         "name": "anotherEngineName"
+                      }
+                    ]
+                  },
+                  "example-2": {
+                    "summary": "Response with new configuration",
+                    "value": [
+                      {
+                        "name": "default",
+                        "displayName": "default",
+                        "group": "default",
+                        "groupDisplayName": "default"
+                      },
+                      {
+                        "name": "anotherEngineName",
+                        "displayName": "anotherEngineDescription",
+                        "group": "anotherEngineGroupName",
+                        "groupDisplayName": "anotherEngineGroupDescription"
                       }
                     ]
                   }
@@ -6223,6 +6916,154 @@
               }
             },
             "description": "Execution with given id does not exist. See the\n[Introduction](https://docs.fluxnova.finos.org/manual/develop/reference/rest/overview/#error-handling)\nfor the error response format."
+          }
+        }
+      }
+    },
+    "/execution/{id}/ad-hoc-activities/complete": {
+      "post": {
+        "operationId": "completeAdHocSubProcess",
+        "tags": [
+          "Execution"
+        ],
+        "summary": "Complete Ad-Hoc Subprocess",
+        "description": "Completes an active ad-hoc subprocess execution by id. The request fails if any inner activity is currently active. Optional variables can be set before completion.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "The id of the ad-hoc subprocess execution to complete."
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdHocSubProcessCompletionDto"
+              },
+              "examples": {
+                "empty-payload": {
+                  "summary": "POST `/execution/{id}/ad-hoc-activities/complete`",
+                  "value": {}
+                },
+                "with-variables": {
+                  "summary": "POST `/execution/{id}/ad-hoc-activities/complete` with variables",
+                  "value": {
+                    "variables": {
+                      "completionReason": {
+                        "value": "manual",
+                        "type": "String"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Request successful. This method returns no content."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionDto"
+                }
+              }
+            },
+            "description": "The execution id is invalid, the execution is not an ad-hoc subprocess, or active child activities exist."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionDto"
+                }
+              }
+            },
+            "description": "An internal server error occurred while completing the ad-hoc subprocess."
+          }
+        }
+      }
+    },
+    "/execution/{id}/ad-hoc-activities/trigger": {
+      "post": {
+        "operationId": "triggerAdHocActivities",
+        "tags": [
+          "Execution"
+        ],
+        "summary": "Trigger Ad Hoc Activities",
+        "description": "Manually triggers one or more ad hoc activities within an ad hoc scope.\r\nAllows specifying activities to activate and optional variables to set in each activity.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "The id of the execution containing the ad hoc scope."
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdHocActivitiesTriggerDto"
+              },
+              "examples": {
+                "example-1": {
+                  "summary": "POST `/execution/{id}/ad-hoc-activities/trigger`",
+                  "value": {
+                    "activities": [
+                      {
+                        "activityId": "taskA",
+                        "variables": {
+                          "priority": {
+                            "value": "high",
+                            "type": "String"
+                          }
+                        }
+                      },
+                      {
+                        "activityId": "taskB"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Request successful. This method returns no content."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionDto"
+                }
+              }
+            },
+            "description": "The request was invalid. For example, if the execution is not waiting in an ad hoc scope,\r\nor if the specified activity id is not found in the ad hoc scope.\r\nSee the [Introduction](https://docs.fluxnova.finos.org/manual/develop/reference/rest/overview/#error-handling) for the error response format."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionDto"
+                }
+              }
+            },
+            "description": "An internal server error occurred while processing the request.\r\nSee the [Introduction](https://docs.fluxnova.finos.org/manual/develop/reference/rest/overview/#error-handling) for the error response format."
           }
         }
       }
@@ -7209,6 +8050,64 @@
             "description": "Only include jobs with a priority lower than or equal to the given value.\nValue must be a valid `long` value."
           },
           {
+            "name": "processDefinitionKey",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Restrict to tasks that belong to a process definition with the given key."
+          },
+          {
+            "name": "processDefinitionKeyIn",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Restrict to tasks that belong to a process definition with one of the given keys. The\nkeys need to be in a comma-separated list."
+          },
+          {
+            "name": "processDefinitionName",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Restrict to tasks that belong to a process definition with the given name."
+          },
+          {
+            "name": "processDefinitionNameLike",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Restrict to tasks that have a process definition name that has the parameter value as\na substring."
+          },
+          {
+            "name": "variableNamesIgnoreCase",
+            "in": "query",
+            "schema": {
+              "default": false,
+              "type": "boolean"
+            },
+            "description": "Match all variable names in this query case-insensitively. If set\n`variableName` and `variablename` are treated as equal."
+          },
+          {
+            "name": "variableValuesIgnoreCase",
+            "in": "query",
+            "schema": {
+              "default": false,
+              "type": "boolean"
+            },
+            "description": "Match all variable values in this query case-insensitively. If set\n`variableValue` and `variablevalue` are treated as equal."
+          },
+          {
+            "name": "processVariables",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Only include tasks that belong to process instances that have variables with certain\nvalues. Variable filtering expressions are comma-separated and are structured as\nfollows:\n\nA valid parameter value has the form `key_operator_value`. `key` is the variable name,\n`operator` is the comparison operator to be used and `value` the variable value.\n\n**Note**: Values are always treated as String objects on server side.\n\nValid `operator` values are:\n`eq` - equal to;\n`neq` - not equal to;\n`gt` - greater than;\n`gteq` - greater than or equal to;\n`lt` - lower than;\n`lteq` - lower than or equal to;\n`like`;\n`notLike`.\n`key` and `value` may not contain underscore or comma characters."
+          },
+          {
             "name": "sortBy",
             "in": "query",
             "schema": {
@@ -7275,6 +8174,7 @@
                         "executionId": "anExecutionId",
                         "id": "anExternalTaskId",
                         "lockExpirationTime": "2015-10-06T16:34:42.000+0200",
+                        "createTime": "2015-10-06T16:34:42.000+0200",
                         "processDefinitionId": "aProcessDefinitionId",
                         "processDefinitionKey": "aProcessDefinitionKey",
                         "processInstanceId": "aProcessInstanceId",
@@ -7293,6 +8193,7 @@
                         "executionId": "anotherExecutionId",
                         "id": "anotherExternalTaskId",
                         "lockExpirationTime": "2015-10-06T16:34:42.000+0200",
+                        "createTime": "2015-10-06T16:34:42.000+0200",
                         "processDefinitionId": "anotherProcessDefinitionId",
                         "processDefinitionKey": "anotherProcessDefinitionKey",
                         "processInstanceId": "anotherProcessInstanceId",
@@ -7400,6 +8301,7 @@
                         "executionId": "anExecutionId",
                         "id": "anExternalTaskId",
                         "lockExpirationTime": "2015-10-06T16:34:42.000+0200",
+                        "createTime": "2015-10-06T16:34:42.000+0200",
                         "processDefinitionId": "aProcessDefinitionId",
                         "processDefinitionKey": "aProcessDefinitionKey",
                         "processInstanceId": "aProcessInstanceId",
@@ -7418,6 +8320,7 @@
                         "executionId": "anotherExecutionId",
                         "id": "anotherExternalTaskId",
                         "lockExpirationTime": "2015-10-06T16:34:42.000+0200",
+                        "createTime": "2015-10-06T16:34:42.000+0200",
                         "processDefinitionId": "aProcessDefinitionId",
                         "processDefinitionKey": "anotherProcessDefinitionKey",
                         "processInstanceId": "anotherProcessInstanceId",
@@ -7629,6 +8532,64 @@
               "format": "int64"
             },
             "description": "Only include jobs with a priority lower than or equal to the given value.\nValue must be a valid `long` value."
+          },
+          {
+            "name": "processDefinitionKey",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Restrict to tasks that belong to a process definition with the given key."
+          },
+          {
+            "name": "processDefinitionKeyIn",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Restrict to tasks that belong to a process definition with one of the given keys. The\nkeys need to be in a comma-separated list."
+          },
+          {
+            "name": "processDefinitionName",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Restrict to tasks that belong to a process definition with the given name."
+          },
+          {
+            "name": "processDefinitionNameLike",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Restrict to tasks that have a process definition name that has the parameter value as\na substring."
+          },
+          {
+            "name": "variableNamesIgnoreCase",
+            "in": "query",
+            "schema": {
+              "default": false,
+              "type": "boolean"
+            },
+            "description": "Match all variable names in this query case-insensitively. If set\n`variableName` and `variablename` are treated as equal."
+          },
+          {
+            "name": "variableValuesIgnoreCase",
+            "in": "query",
+            "schema": {
+              "default": false,
+              "type": "boolean"
+            },
+            "description": "Match all variable values in this query case-insensitively. If set\n`variableValue` and `variablevalue` are treated as equal."
+          },
+          {
+            "name": "processVariables",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Only include tasks that belong to process instances that have variables with certain\nvalues. Variable filtering expressions are comma-separated and are structured as\nfollows:\n\nA valid parameter value has the form `key_operator_value`. `key` is the variable name,\n`operator` is the comparison operator to be used and `value` the variable value.\n\n**Note**: Values are always treated as String objects on server side.\n\nValid `operator` values are:\n`eq` - equal to;\n`neq` - not equal to;\n`gt` - greater than;\n`gteq` - greater than or equal to;\n`lt` - lower than;\n`lteq` - lower than or equal to;\n`like`;\n`notLike`.\n`key` and `value` may not contain underscore or comma characters."
           }
         ],
         "responses": {
@@ -7867,6 +8828,9 @@
                             "value": "3456",
                             "valueInfo": {}
                           }
+                        },
+                        "extensionProperties": {
+                          "key": "value"
                         }
                       }
                     ]
@@ -8221,6 +9185,7 @@
                       "executionId": "anExecutionId",
                       "id": "anExternalTaskId",
                       "lockExpirationTime": "2015-10-06T16:34:42.000+0200",
+                      "createTime": "2015-10-06T16:34:42.000+0200",
                       "processDefinitionId": "aProcessDefinitionId",
                       "processDefinitionKey": "aProcessDefinitionKey",
                       "processInstanceId": "aProcessInstanceId",
@@ -13735,7 +14700,7 @@
       "get": {
         "operationId": "getHistoricDetails",
         "tags": [
-          "Historic Detail API"
+          "Historic Detail"
         ],
         "summary": "Get Historic Details",
         "description": "Queries for historic details that fulfill the given parameters.\nThe size of the result set can be retrieved by using the\n[Get Historic Detail Count](https://docs.fluxnova.finos.org/manual/develop/reference/rest/history/detail/get-detail-query-count/) method.",
@@ -14043,7 +15008,7 @@
       "post": {
         "operationId": "queryHistoricDetails",
         "tags": [
-          "Historic Detail API"
+          "Historic Detail"
         ],
         "summary": "Get Historic Details (POST)",
         "description": "Queries for historic details that fulfill the given parameters. This method is slightly more\npowerful than the [Get Historic Details](https://docs.fluxnova.finos.org/manual/develop/reference/rest/history/detail/get-detail-query/)\nmethod because it allows sorting by multiple parameters. The size of the result set can be retrieved by\nusing the [Get Historic Detail Count](https://docs.fluxnova.finos.org/manual/develop/reference/rest/history/detail/get-detail-query-count/)\nmethod.",
@@ -14194,7 +15159,7 @@
       "get": {
         "operationId": "getHistoricDetailsCount",
         "tags": [
-          "Historic Detail API"
+          "Historic Detail"
         ],
         "summary": "Get Historic Detail Count",
         "description": "Queries for the number of historic details that fulfill the given parameters.\nTakes the same parameters as the [Get Historic\nDetails](https://docs.fluxnova.finos.org/manual/develop/reference/rest/history/detail/get-detail-query/)\nmethod.",
@@ -14391,7 +15356,7 @@
       "get": {
         "operationId": "historicDetail",
         "tags": [
-          "Historic Detail API"
+          "Historic Detail"
         ],
         "summary": "Get Historic Detail",
         "description": "Retrieves a historic detail by id.",
@@ -14475,7 +15440,7 @@
       "get": {
         "operationId": "historicDetailBinary",
         "tags": [
-          "Historic Detail API"
+          "Historic Detail"
         ],
         "summary": "Get Historic Detail (Binary)",
         "description": "Retrieves the content of a historic variable update by id. Applicable for byte\narray and file variables.",
@@ -15941,7 +16906,8 @@
                         "resolved": false,
                         "removalTime": null,
                         "rootProcessInstanceId": "aRootProcessInstanceId",
-                        "annotation": "an annotation"
+                        "annotation": "an annotation",
+                        "rootCauseIncidentMessage": "aRootCauseIncidentMessage"
                       },
                       {
                         "id": "anIncidentId",
@@ -15964,7 +16930,8 @@
                         "resolved": true,
                         "removalTime": "2018-02-10T14:33:19.000+0200",
                         "rootProcessInstanceId": "aRootProcessInstanceId",
-                        "annotation": "another annotation"
+                        "annotation": "another annotation",
+                        "rootCauseIncidentMessage": "anotherRootCauseIncidentMessage"
                       }
                     ]
                   }
@@ -17660,6 +18627,14 @@
             "description": "Restrict the query to all process instances that are top level process instances."
           },
           {
+            "name": "rootProcessInstanceId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by root process instance id."
+          },
+          {
             "name": "finished",
             "in": "query",
             "schema": {
@@ -18259,6 +19234,14 @@
               "type": "boolean"
             },
             "description": "Restrict the query to all process instances that are top level process instances."
+          },
+          {
+            "name": "rootProcessInstanceId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by root process instance id."
           },
           {
             "name": "finished",
@@ -22841,6 +23824,76 @@
         }
       }
     },
+    "/incident/process-instance-statistics": {
+      "post": {
+        "operationId": "getProcessInstanceIncidentStatistics",
+        "tags": [
+          "Incident"
+        ],
+        "summary": "Get Incident Count (POST) by process instance ids",
+        "description": "Queries for the number of incidents for each process instance by given process instance ids.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProcessInstanceIncidentCountRequestDto"
+              },
+              "examples": {
+                "example-1": {
+                  "summary": "POST `/incident/process-instance-statistics` Request Body 1",
+                  "value": {
+                    "processInstanceIds": [
+                      "aProcessInstId",
+                      "anotherProcessInstId"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProcessInstanceIncidentCountStatisticsDto"
+                  }
+                },
+                "examples": {
+                  "example-1": {
+                    "summary": "Status 200 Response 1",
+                    "value": [
+                      {
+                        "processInstanceId": "aProcessInstId",
+                        "incidentCount": "1"
+                      },
+                      {
+                        "processInstanceId": "anotherProcessDefnId",
+                        "incidentCount": "0"
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            "description": "Request successful."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionDto"
+                }
+              }
+            },
+            "description": "Bad Request\nReturned if the request body is invalid."
+          }
+        }
+      }
+    },
     "/incident/{id}": {
       "delete": {
         "operationId": "resolveIncident",
@@ -23255,6 +24308,14 @@
               "type": "boolean"
             },
             "description": "Include jobs which belong to no tenant. Can be used in combination with `tenantIdIn`.\nValue may only be `true`, as `false` is the default behavior."
+          },
+          {
+            "name": "acquired",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Only select jobs which are acquired, i.e.,  lock expiration date is not null, lock expiration\ndate is in future. Value may only be `true`, as `false` is the default\nbehavior. This does not take account if the job is suspended. This filter can be used with the\nsuspension filter."
           },
           {
             "name": "sortBy",
@@ -24539,6 +25600,14 @@
               "type": "boolean"
             },
             "description": "Include jobs which belong to no tenant. Can be used in combination with `tenantIdIn`.\nValue may only be `true`, as `false` is the default behavior."
+          },
+          {
+            "name": "acquired",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Only select jobs which are acquired, i.e.,  lock expiration date is not null, lock expiration\ndate is in future. Value may only be `true`, as `false` is the default\nbehavior. This does not take account if the job is suspended. This filter can be used with the\nsuspension filter."
           }
         ],
         "responses": {
@@ -24647,6 +25716,64 @@
         }
       }
     },
+    "/job/delete": {
+      "post": {
+        "operationId": "deleteByJobIds",
+        "tags": [
+          "Job"
+        ],
+        "summary": "Delete Jobs by list of jobIds",
+        "description": "Delete jobs by supplied list of jobIds.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JobDeletionDto"
+              },
+              "examples": {
+                "example-1": {
+                  "summary": "Delete jobs with the given job ids. POST `/job/delete`",
+                  "value": {
+                    "jobIds": [
+                      "aJobId",
+                      "anotherJobId"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Request successful."
+          },
+          "207": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Multi-Status: Indicates that at least one request has failed."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionDto"
+                }
+              }
+            },
+            "description": "Returned if the request parameters are invalid, for example if an empty list is provided as input."
+          }
+        }
+      }
+    },
     "/job/retries": {
       "post": {
         "operationId": "setJobRetriesAsyncOperation",
@@ -24734,6 +25861,107 @@
       }
     },
     "/job/suspended": {
+      "post": {
+        "operationId": "updateSuspensionStateByJobIds",
+        "tags": [
+          "Job"
+        ],
+        "summary": "Activate/Suspend Jobs by list of jobIds",
+        "description": "Activates or suspends jobs by supplied list of jobIds\nand a boolean flag suspended.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JobActivateSuspendDto"
+              },
+              "examples": {
+                "example-1": {
+                  "summary": "Activates or suspends jobs with the given job ids. POST `/job/suspended`",
+                  "value": {
+                    "jobIds": [
+                      "aJobId",
+                      "anotherJobId"
+                    ],
+                    "suspended": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/JobSuspensionResponse"
+                  }
+                },
+                "examples": {
+                  "example-1": {
+                    "summary": "Status 200 Response",
+                    "value": [
+                      {
+                        "status": "SUCCESS",
+                        "errorMessage": "null",
+                        "jobId": "aJobId"
+                      },
+                      {
+                        "status": "SUCCESS",
+                        "errorMessage": "null",
+                        "jobId": "anotherJobId"
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            "description": "Request successful."
+          },
+          "207": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/JobSuspensionResponse"
+                  }
+                },
+                "examples": {
+                  "example-1": {
+                    "summary": "Status 200 Response",
+                    "value": [
+                      {
+                        "status": "FAILURE",
+                        "errorMessage": "Cannot find job with id 0eb066f5-7c34-11ef-b497-9e2dfee1: jobId is null",
+                        "jobId": "aJobId"
+                      },
+                      {
+                        "status": "SUCCESS",
+                        "errorMessage": "null",
+                        "jobId": "anotherJobId"
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            "description": "Multi-Status: Indicates that at least one request has failed."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionDto"
+                }
+              }
+            },
+            "description": "Returned if the request parameters are invalid, for example if an empty list is provided as input."
+          }
+        }
+      },
       "put": {
         "operationId": "updateSuspensionStateBy",
         "tags": [
@@ -29717,7 +30945,7 @@
           "Process Definition"
         ],
         "summary": "Delete",
-        "description": "Deletes a running process instance by id.",
+        "description": "Deletes a process definition by id.",
         "parameters": [
           {
             "name": "id",
@@ -31430,6 +32658,14 @@
             "description": "Restrict the query to all process instances that are top level process instances."
           },
           {
+            "name": "rootProcessInstanceId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by root process instance id."
+          },
+          {
             "name": "leafProcessInstances",
             "in": "query",
             "schema": {
@@ -31835,6 +33071,14 @@
             "description": "Restrict the query to all process instances that are top level process instances."
           },
           {
+            "name": "rootProcessInstanceId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by root process instance id."
+          },
+          {
             "name": "leafProcessInstances",
             "in": "query",
             "schema": {
@@ -32117,6 +33361,87 @@
               }
             },
             "description": "Bad Request\nReturned if some of the query parameters are invalid, i.e., neither processInstanceIds, nor historicProcessInstanceQuery is present"
+          }
+        }
+      }
+    },
+    "/process-instance/instance-counts": {
+      "post": {
+        "operationId": "getProcessInstanceStatistics",
+        "tags": [
+          "Process Instance"
+        ],
+        "summary": "Get List Count (POST) by process definition ids",
+        "description": "Queries for the number of process instances by given process definition ids and status provided in the\nrequest.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProcessInstanceCountRequestDto"
+              },
+              "examples": {
+                "example-1": {
+                  "summary": "POST `/process-instance/instance-counts` Request Body 1",
+                  "value": {
+                    "processDefinitionIds": [
+                      "aProcessDefnId",
+                      "anotherProcessDefnId"
+                    ],
+                    "active": true
+                  }
+                },
+                "example-2": {
+                  "summary": "POST `/process-instance/instance-counts` Request Body 1",
+                  "value": {
+                    "processDefinitionIds": [
+                      "aProcessDefnId",
+                      "anotherProcessDefnId"
+                    ],
+                    "active": false
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProcessInstanceCountStatisticsDto"
+                  }
+                },
+                "examples": {
+                  "example-1": {
+                    "summary": "Status 200 Response 1",
+                    "value": [
+                      {
+                        "processDefinitionId": "aProcessDefnId",
+                        "instanceCount": "1"
+                      },
+                      {
+                        "processDefinitionId": "anotherProcessDefnId",
+                        "instanceCount": "0"
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            "description": "Request successful."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionDto"
+                }
+              }
+            },
+            "description": "Bad Request\nReturned if the request body is invalid."
           }
         }
       }
@@ -34090,7 +35415,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Restrict to tasks that belong to process instances with the given business key which \nis described by an expression. See the \n[user guide](https://docs.fluxnova.finos.org/manual/develop/user-guide/process-engine/expression-language/#internal-context-functions)\nfor more information on available functions."
+            "description": "Restrict to tasks that belong to process instances with the given business key which\nis described by an expression. See the\n[user guide](https://docs.fluxnova.finos.org/manual/develop/user-guide/process-engine/expression-language/#internal-context-functions)\nfor more information on available functions."
           },
           {
             "name": "processInstanceBusinessKeyIn",
@@ -34415,6 +35740,14 @@
               "type": "string"
             },
             "description": "Restrict to tasks that have one of the given keys. The keys need to be in a\ncomma-separated list."
+          },
+          {
+            "name": "taskDefinitionKeyNotIn",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Exclude instances by a list of task definition keys. The keys need to be in a\ncomma-separated list."
           },
           {
             "name": "taskDefinitionKeyLike",
@@ -34823,6 +36156,33 @@
             "description": "Check if task has attachments and/or comments. Value may only be `true`, as\n`false` is the default behavior.\nAdding the filter will do additional attachment and comments queries to the database,\nit might slow down the query in case of tables having high volume of data.\nThis param is not considered for count queries"
           },
           {
+            "name": "withTaskVariablesInReturn",
+            "in": "query",
+            "schema": {
+              "default": false,
+              "type": "boolean"
+            },
+            "description": "Indicates if all the variables visible from task should be retrieved. A variable is visible from the task\nif it is a local task variable or declared in a parent scope of the task. Value may only be `true`, as\n`false` is the default behavior."
+          },
+          {
+            "name": "withTaskLocalVariablesInReturn",
+            "in": "query",
+            "schema": {
+              "default": false,
+              "type": "boolean"
+            },
+            "description": "Indicates if all the local variables visible from task should be retrieved. Value may only be `true`, as\n`false` is the default behavior."
+          },
+          {
+            "name": "evaluateFormKey",
+            "in": "query",
+            "schema": {
+              "default": true,
+              "type": "boolean"
+            },
+            "description": "Indicates whether the form key should be evaluated when returning the task. If set to `false`,\nthe form key is returned as-is without evaluation. Defaults to `true`."
+          },
+          {
             "name": "sortBy",
             "in": "query",
             "schema": {
@@ -34921,6 +36281,11 @@
                           "binding": "version",
                           "version": 2
                         },
+                        "camundaFormRef": {
+                          "key": "aCamundaFormKey",
+                          "binding": "version",
+                          "version": 2
+                        },
                         "tenantId": "aTenantId",
                         "taskState": "aTaskState"
                       }
@@ -34957,7 +36322,115 @@
                           "binding": "version",
                           "version": 2
                         },
+                        "camundaFormRef": {
+                          "key": "aCamundaFormKey",
+                          "binding": "version",
+                          "version": 2
+                        },
                         "tenantId": "aTenantId",
+                        "attachment": false,
+                        "comment": false
+                      }
+                    ]
+                  },
+                  "example-3": {
+                    "summary": "Status 200 response 3",
+                    "description": "Response for GET\n                       `/task?assignee\u003danAssignee\u0026withCommentAttachmentInfo\u003dtrue\u0026withTaskVariablesInReturn\u003dtrue`",
+                    "value": [
+                      {
+                        "id": "anId",
+                        "name": "aName",
+                        "assignee": "anAssignee",
+                        "created": "2013-01-23T13:42:42.657+0200",
+                        "due": "2013-01-23T13:49:42.323+0200",
+                        "followUp:": "2013-01-23T13:44:42.987+0200",
+                        "lastUpdated:": "2013-01-23T13:44:42.987+0200",
+                        "delegationState": "RESOLVED",
+                        "description": "aDescription",
+                        "executionId": "anExecution",
+                        "owner": "anOwner",
+                        "parentTaskId": "aParentId",
+                        "priority": 42,
+                        "processDefinitionId": "aProcDefId",
+                        "processInstanceId": "aProcInstId",
+                        "caseDefinitionId": "aCaseDefId",
+                        "caseInstanceId": "aCaseInstId",
+                        "caseExecutionId": "aCaseExecution",
+                        "taskDefinitionKey": "aTaskDefinitionKey",
+                        "suspended": false,
+                        "formKey": "aFormKey",
+                        "fluxnovaFormRef": {
+                          "key": "aFluxnovaFormKey",
+                          "binding": "version",
+                          "version": 2
+                        },
+                        "camundaFormRef": {
+                          "key": "aCamundaFormKey",
+                          "binding": "version",
+                          "version": 2
+                        },
+                        "tenantId": "aTenantId",
+                        "variables": {
+                          "aVariableKey": {
+                            "type": "String",
+                            "value": "aVariableValue",
+                            "valueInfo": {}
+                          },
+                          "anotherVariableKey": {
+                            "type": "String",
+                            "value": "anotherVariableValue",
+                            "valueInfo": {}
+                          }
+                        },
+                        "attachment": false,
+                        "comment": false
+                      }
+                    ]
+                  },
+                  "example-4": {
+                    "summary": "Status 200 response 4",
+                    "description": "Response for GET\n                       `/task?assignee\u003danAssignee\u0026withCommentAttachmentInfo\u003dtrue\u0026withTaskLocalVariablesInReturn\u003dtrue`",
+                    "value": [
+                      {
+                        "id": "anId",
+                        "name": "aName",
+                        "assignee": "anAssignee",
+                        "created": "2013-01-23T13:42:42.657+0200",
+                        "due": "2013-01-23T13:49:42.323+0200",
+                        "followUp:": "2013-01-23T13:44:42.987+0200",
+                        "lastUpdated:": "2013-01-23T13:44:42.987+0200",
+                        "delegationState": "RESOLVED",
+                        "description": "aDescription",
+                        "executionId": "anExecution",
+                        "owner": "anOwner",
+                        "parentTaskId": "aParentId",
+                        "priority": 42,
+                        "processDefinitionId": "aProcDefId",
+                        "processInstanceId": "aProcInstId",
+                        "caseDefinitionId": "aCaseDefId",
+                        "caseInstanceId": "aCaseInstId",
+                        "caseExecutionId": "aCaseExecution",
+                        "taskDefinitionKey": "aTaskDefinitionKey",
+                        "suspended": false,
+                        "formKey": "aFormKey",
+                        "fluxnovaFormRef": {
+                          "key": "aCamundaFormKey",
+                          "binding": "version",
+                          "version": 2
+                        },
+                        "camundaFormRef": {
+                          "key": "aCamundaFormKey",
+                          "binding": "version",
+                          "version": 2
+                        },
+                        "tenantId": "aTenantId",
+                        "variables": {
+                          "anotherVariableKey": {
+                            "type": "String",
+                            "value": "anotherVariableValue",
+                            "valueInfo": {}
+                          }
+                        },
                         "attachment": false,
                         "comment": false
                       }
@@ -35063,6 +36536,44 @@
                       }
                     ]
                   }
+                },
+                "example-3": {
+                  "summary": "POST `/task` Request Body 3",
+                  "description": "Logical query: assignee \u003d \"John Munda\" AND (name \u003d \"Approve Invoice\" OR priority \u003d 5) AND (suspended \u003d false OR taskDefinitionKey \u003d \"approveInvoice\")",
+                  "value": {
+                    "assignee": "John Munda",
+                    "withCommentAttachmentInfo": "true",
+                    "withTaskVariablesInReturn": "true",
+                    "orQueries": [
+                      {
+                        "name": "Approve Invoice",
+                        "priority": 5
+                      },
+                      {
+                        "suspended": false,
+                        "taskDefinitionKey": "approveInvoice"
+                      }
+                    ]
+                  }
+                },
+                "example-4": {
+                  "summary": "POST `/task` Request Body 4",
+                  "description": "Logical query: assignee \u003d \"John Munda\" AND (name \u003d \"Approve Invoice\" OR priority \u003d 5) AND (suspended \u003d false OR taskDefinitionKey \u003d \"approveInvoice\")",
+                  "value": {
+                    "assignee": "John Munda",
+                    "withCommentAttachmentInfo": "true",
+                    "withTaskLocalVariablesInReturn": "true",
+                    "orQueries": [
+                      {
+                        "name": "Approve Invoice",
+                        "priority": 5
+                      },
+                      {
+                        "suspended": false,
+                        "taskDefinitionKey": "approveInvoice"
+                      }
+                    ]
+                  }
                 }
               }
             }
@@ -35109,6 +36620,11 @@
                           "binding": "version",
                           "version": 2
                         },
+                        "camundaFormRef": {
+                          "key": "aCamundaFormKey",
+                          "binding": "version",
+                          "version": 2
+                        },
                         "tenantId": "aTenantId",
                         "taskState": "aTaskState"
                       }
@@ -35145,6 +36661,89 @@
                         "comment": false
                       }
                     ]
+                  },
+                  "example-3": {
+                    "summary": "Status 200 response 3",
+                    "value": [
+                      {
+                        "id": "349fffa8-6571-11e7-9a44-d6940f5ef88d",
+                        "name": "Approve Invoice",
+                        "assignee": "John Munda",
+                        "created": "2017-07-10T15:10:54.670+0200",
+                        "due": "2017-07-17T15:10:54.670+0200",
+                        "followUp": null,
+                        "lastUpdated": "2017-07-17T15:10:54.670+0200",
+                        "delegationState": null,
+                        "description": "Approve the invoice (or not).",
+                        "executionId": "349f8a5c-6571-11e7-9a44-d6940f5ef88d",
+                        "owner": null,
+                        "parentTaskId": null,
+                        "priority": 50,
+                        "processDefinitionId": "invoice:1:2c8d8057-6571-11e7-9a44-d6940f5ef88d",
+                        "processInstanceId": "349f8a5c-6571-11e7-9a44-d6940f5ef88d",
+                        "taskDefinitionKey": "approveInvoice",
+                        "caseExecutionId": null,
+                        "caseInstanceId": null,
+                        "caseDefinitionId": null,
+                        "suspended": false,
+                        "formKey": "embedded:app:develop/invoice-forms/approve-invoice.html",
+                        "tenantId": null,
+                        "taskState": "aTaskState",
+                        "variables": {
+                          "aVariableKey": {
+                            "type": "String",
+                            "value": "aVariableValue",
+                            "valueInfo": {}
+                          },
+                          "anotherVariableKey": {
+                            "type": "String",
+                            "value": "anotherVariableValue",
+                            "valueInfo": {}
+                          }
+                        },
+                        "attachment": false,
+                        "comment": false
+                      }
+                    ]
+                  },
+                  "example-4": {
+                    "summary": "Status 200 response 4",
+                    "value": [
+                      {
+                        "id": "349fffa8-6571-11e7-9a44-d6940f5ef88d",
+                        "name": "Approve Invoice",
+                        "assignee": "John Munda",
+                        "created": "2017-07-10T15:10:54.670+0200",
+                        "due": "2017-07-17T15:10:54.670+0200",
+                        "followUp": null,
+                        "lastUpdated": "2017-07-17T15:10:54.670+0200",
+                        "delegationState": null,
+                        "description": "Approve the invoice (or not).",
+                        "executionId": "349f8a5c-6571-11e7-9a44-d6940f5ef88d",
+                        "owner": null,
+                        "parentTaskId": null,
+                        "priority": 50,
+                        "processDefinitionId": "invoice:1:2c8d8057-6571-11e7-9a44-d6940f5ef88d",
+                        "processInstanceId": "349f8a5c-6571-11e7-9a44-d6940f5ef88d",
+                        "taskDefinitionKey": "approveInvoice",
+                        "caseExecutionId": null,
+                        "caseInstanceId": null,
+                        "caseDefinitionId": null,
+                        "suspended": false,
+                        "formKey": "embedded:app:develop/invoice-forms/approve-invoice.html",
+                        "tenantId": null,
+                        "taskState": "aTaskState",
+                        "variables": {
+                          "anotherVariableKey": {
+                            "type": "String",
+                            "value": "anotherVariableValue",
+                            "valueInfo": {}
+                          }
+                        },
+                        "attachment": false,
+                        "comment": false
+                      }
+                    ]
                   }
                 }
               }
@@ -35160,6 +36759,288 @@
               }
             },
             "description": "Returned if some of the query parameters are invalid, for example if a `sortOrder`\nparameter is supplied, but no `sortBy`, or if an invalid operator for variable\ncomparison is used. See the\n[Introduction](https://docs.fluxnova.finos.org/manual/develop/reference/rest/overview/#error-handling)\nfor the error response format."
+          }
+        }
+      }
+    },
+    "/task/assign": {
+      "post": {
+        "deprecated": true,
+        "operationId": "assignTasks",
+        "tags": [
+          "Task"
+        ],
+        "summary": "Assign tasks",
+        "description": "**Deprecated!** Use `POST /bulk/task/assign` instead. This endpoint is no longer supported.\n\nAssign all tasks to specific user",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TasksAssignDto"
+              },
+              "examples": {
+                "example-1": {
+                  "summary": "POST /task/assign",
+                  "value": {
+                    "taskIds": [
+                      "0eb066f5-7c34-11ef-b497-9e2bc863dfee",
+                      "0eab5dde-7c34-11ef-b497-9e2bc863dfee"
+                    ],
+                    "userIdDto": {
+                      "userId": "demo"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "example-1": {
+                    "value": [
+                      {
+                        "status": "SUCCESS",
+                        "taskId": "0eb066f5-7c34-11ef-b497-9e2bc863dfee",
+                        "errorMessage": null
+                      },
+                      {
+                        "status": "SUCCESS",
+                        "taskId": "0eab5dde-7c34-11ef-b497-9e2bc863dfee",
+                        "errorMessage": null
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            "description": "Request successful."
+          },
+          "207": {
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "example-1": {
+                    "value": [
+                      {
+                        "status": "FAILURE",
+                        "taskId": "0eb066f5-7c34-11ef-b497-9e2bc863dfee1",
+                        "errorMessage": "Cannot find task with id 0eb066f5-7c34-11ef-b497-9e2bc863dfee1: task is null"
+                      },
+                      {
+                        "status": "SUCCESS",
+                        "taskId": "0eab5dde-7c34-11ef-b497-9e2bc863dfee",
+                        "errorMessage": null
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            "description": "Multi-Status: Indicates that at least one request has failed."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionDto"
+                }
+              }
+            },
+            "description": "Returned if some query parameters are invalid. See the\n[Introduction](https://docs.fluxnova.finos.org/manual/develop/reference/rest/overview/#error-handling) for the error response format."
+          }
+        }
+      }
+    },
+    "/task/complete/tasks": {
+      "post": {
+        "deprecated": true,
+        "operationId": "completeTasks",
+        "tags": [
+          "Task"
+        ],
+        "summary": "Complete Tasks",
+        "description": "**Deprecated!** Use `POST /bulk/task/complete` instead. This endpoint is no longer supported.\n\nCompletes a list of tasks.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompleteTaskRequestDto"
+              },
+              "examples": {
+                "example-1": {
+                  "summary": "Completing list of tasks with withVariablesInReturn flag set to true",
+                  "value": {
+                    "completeTasksDto": [
+                      {
+                        "taskId": "f010bd64-96c4-11ef-8966-0205857feb80",
+                        "variables": {
+                          "aVariable": {
+                            "value": "aStringValue",
+                            "type": "String"
+                          },
+                          "anotherVariable": {
+                            "value": true,
+                            "type": "Boolean"
+                          }
+                        }
+                      },
+                      {
+                        "taskId": "ea7d6ebc-96c4-11ef-8966-0205857feb80",
+                        "variables": {
+                          "aVariable": {
+                            "value": "aStringValue",
+                            "type": "String"
+                          },
+                          "anotherVariable": {
+                            "value": true,
+                            "type": "Boolean"
+                          }
+                        }
+                      }
+                    ],
+                    "withVariablesInReturn": true
+                  }
+                },
+                "example-2": {
+                  "summary": "Completing list of tasks with withVariablesInReturn flag set to false",
+                  "value": {
+                    "completeTasksDto": [
+                      {
+                        "taskId": "f010bd64-96c4-11ef-8966-0205857feb80",
+                        "variables": {
+                          "aVariable": {
+                            "value": "aStringValue",
+                            "type": "String"
+                          },
+                          "anotherVariable": {
+                            "value": true,
+                            "type": "Boolean"
+                          }
+                        }
+                      },
+                      {
+                        "taskId": "ea7d6ebc-96c4-11ef-8966-0205857feb80",
+                        "variables": {
+                          "aVariable": {
+                            "value": "aStringValue",
+                            "type": "String"
+                          },
+                          "anotherVariable": {
+                            "value": true,
+                            "type": "Boolean"
+                          }
+                        }
+                      }
+                    ],
+                    "withVariablesInReturn": false
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "example-1": {
+                    "value": [
+                      {
+                        "variables": {
+                          "aVariable": {
+                            "value": "aStringValue",
+                            "type": "String"
+                          },
+                          "anotherVariable": {
+                            "value": true,
+                            "type": "Boolean"
+                          }
+                        },
+                        "status": "SUCCESS",
+                        "taskId": "0eb066f5-7c34-11ef-b497-9e2bc863dfee",
+                        "errorMessage": null
+                      },
+                      {
+                        "variables": {
+                          "aVariable": {
+                            "value": "aStringValue",
+                            "type": "String"
+                          },
+                          "anotherVariable": {
+                            "value": true,
+                            "type": "Boolean"
+                          }
+                        },
+                        "status": "SUCCESS",
+                        "taskId": "0eab5dde-7c34-11ef-b497-9e2bc863dfee",
+                        "errorMessage": null
+                      }
+                    ]
+                  },
+                  "example-2": {
+                    "value": [
+                      {
+                        "variables": null,
+                        "status": "SUCCESS",
+                        "taskId": "0eb066f5-7c34-11ef-b497-9e2bc863dfee",
+                        "errorMessage": null
+                      },
+                      {
+                        "variables": null,
+                        "status": "SUCCESS",
+                        "taskId": "0eab5dde-7c34-11ef-b497-9e2bc863dfee",
+                        "errorMessage": null
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            "description": "Request successful."
+          },
+          "207": {
+            "content": {
+              "application/json": {
+                "schema": {},
+                "examples": {
+                  "example-3": {
+                    "value": [
+                      {
+                        "variables": null,
+                        "status": "FAILURE",
+                        "taskId": "0eb066f5-7c34-11ef-b497-9e2bc863dfee1",
+                        "errorMessage": "Cannot find task with id 0eb066f5-7c34-11ef-b497-9e2bc863dfee1: task is null"
+                      },
+                      {
+                        "variables": null,
+                        "status": "SUCCESS",
+                        "taskId": "0eab5dde-7c34-11ef-b497-9e2bc863dfee",
+                        "errorMessage": null
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            "description": "Multi-Status: Indicates that at least one request has failed."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionDto"
+                }
+              }
+            },
+            "description": "Returned if some query parameters are invalid. See the\n[Introduction](https://docs.fluxnova.finos.org/manual/develop/reference/rest/overview/#error-handling) for the error response format."
           }
         }
       }
@@ -35219,7 +37100,7 @@
             "schema": {
               "type": "string"
             },
-            "description": "Restrict to tasks that belong to process instances with the given business key which \nis described by an expression. See the \n[user guide](https://docs.fluxnova.finos.org/manual/develop/user-guide/process-engine/expression-language/#internal-context-functions)\nfor more information on available functions."
+            "description": "Restrict to tasks that belong to process instances with the given business key which\nis described by an expression. See the\n[user guide](https://docs.fluxnova.finos.org/manual/develop/user-guide/process-engine/expression-language/#internal-context-functions)\nfor more information on available functions."
           },
           {
             "name": "processInstanceBusinessKeyIn",
@@ -35544,6 +37425,14 @@
               "type": "string"
             },
             "description": "Restrict to tasks that have one of the given keys. The keys need to be in a\ncomma-separated list."
+          },
+          {
+            "name": "taskDefinitionKeyNotIn",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Exclude instances by a list of task definition keys. The keys need to be in a\ncomma-separated list."
           },
           {
             "name": "taskDefinitionKeyLike",
@@ -35950,6 +37839,33 @@
               "type": "boolean"
             },
             "description": "Check if task has attachments and/or comments. Value may only be `true`, as\n`false` is the default behavior.\nAdding the filter will do additional attachment and comments queries to the database,\nit might slow down the query in case of tables having high volume of data.\nThis param is not considered for count queries"
+          },
+          {
+            "name": "withTaskVariablesInReturn",
+            "in": "query",
+            "schema": {
+              "default": false,
+              "type": "boolean"
+            },
+            "description": "Indicates if all the variables visible from task should be retrieved. A variable is visible from the task\nif it is a local task variable or declared in a parent scope of the task. Value may only be `true`, as\n`false` is the default behavior."
+          },
+          {
+            "name": "withTaskLocalVariablesInReturn",
+            "in": "query",
+            "schema": {
+              "default": false,
+              "type": "boolean"
+            },
+            "description": "Indicates if all the local variables visible from task should be retrieved. Value may only be `true`, as\n`false` is the default behavior."
+          },
+          {
+            "name": "evaluateFormKey",
+            "in": "query",
+            "schema": {
+              "default": true,
+              "type": "boolean"
+            },
+            "description": "Indicates whether the form key should be evaluated when returning the task. If set to `false`,\nthe form key is returned as-is without evaluation. Defaults to `true`."
           }
         ],
         "responses": {
@@ -36137,6 +38053,71 @@
         }
       }
     },
+    "/task/create/comments": {
+      "post": {
+        "deprecated": true,
+        "operationId": "createTaskComments",
+        "tags": [
+          "Task Comment"
+        ],
+        "summary": "Create task comments",
+        "description": "**Deprecated!** Use `POST /bulk/task/comment/create` instead. This endpoint is no longer supported.\n\nCreate a list of task comments.",
+        "requestBody": {
+          "description": "**Note:** Only the `taskId`, `message`, `processInstanceId` properties will be used. Every\nother property passed to this endpoint will be ignored.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CommentDto"
+              },
+              "examples": {
+                "example-1": {
+                  "summary": "POST `/task/create/comments`",
+                  "value": [
+                    {
+                      "taskId": "1f7e5f43-3e3c-11ef-ab08-3606d2560f62",
+                      "message": "Comment process instance"
+                    },
+                    {
+                      "taskId": "1f7e5f43-3e3c-11ef-ab08-3606d2560f62",
+                      "processInstanceId": "2f7e5f43-3e3c-11ef-ab08-3606d2560f62",
+                      "message": "Comment process instance"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Request successful."
+          },
+          "207": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Multi-Status: Indicates that at least one request has failed."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionDto"
+                }
+              }
+            },
+            "description": "Returned if some query parameters are invalid, the number of commentDtos exceeds 100.\nSee the [Introduction](https://docs.fluxnova.finos.org/manual/develop/reference/rest/overview/#error-handling) for the error\nresponse format."
+          }
+        }
+      }
+    },
     "/task/report/candidate-group-count": {
       "get": {
         "operationId": "getTaskCountByCandidateGroup",
@@ -36206,6 +38187,89 @@
         }
       }
     },
+    "/task/update": {
+      "post": {
+        "deprecated": true,
+        "operationId": "updateTasks",
+        "tags": [
+          "Task"
+        ],
+        "summary": "Update tasks",
+        "description": "**Deprecated!** Use `POST /bulk/task/update` instead. This endpoint is no longer supported.\n\nUpdates a list of tasks.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaskDto"
+              },
+              "examples": {
+                "example-1": {
+                  "summary": "POST /task/update",
+                  "value": [
+                    {
+                      "id": "taskId1",
+                      "name": "Task 1",
+                      "description": "This task needs to be done urgently",
+                      "priority": 30,
+                      "assignee": "peter",
+                      "owner": "mary",
+                      "delegationState": "PENDING",
+                      "due": "2014-08-30T10:00:00.000+0200",
+                      "followUp": "2014-08-25T10:00:00.000+0200",
+                      "parentTaskId": "parentTaskId1",
+                      "caseInstanceId": "caseInstanceId1",
+                      "tenantId": null
+                    },
+                    {
+                      "id": "taskId2",
+                      "name": "Task 2",
+                      "description": "This task is of medium priority",
+                      "priority": 20,
+                      "assignee": "john",
+                      "owner": "jane",
+                      "delegationState": "RESOLVED",
+                      "due": "2014-09-15T10:00:00.000+0200",
+                      "followUp": "2014-09-10T10:00:00.000+0200",
+                      "parentTaskId": "parentTaskId2",
+                      "caseInstanceId": "caseInstanceId2",
+                      "tenantId": null
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Request successful."
+          },
+          "207": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Multi-Status: Indicates that at least one request has failed."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionDto"
+                }
+              }
+            },
+            "description": "Returned if some query parameters are invalid, the number of taskDtos exceeds 100,\nor there are duplicate task IDs. See the\n[Introduction](https://docs.fluxnova.finos.org/manual/develop/reference/rest/overview/#error-handling) for the error response format."
+          }
+        }
+      }
+    },
     "/task/{id}": {
       "delete": {
         "operationId": "deleteTask",
@@ -36267,6 +38331,15 @@
             },
             "required": true,
             "description": "The id of the task to be retrieved."
+          },
+          {
+            "name": "evaluateFormKey",
+            "in": "query",
+            "schema": {
+              "default": true,
+              "type": "boolean"
+            },
+            "description": "Indicates whether the form key should be evaluated when returning the task. If set to `false`,\nthe form key is returned as-is without evaluation. Defaults to `true`."
           }
         ],
         "responses": {
@@ -36305,6 +38378,11 @@
                         "binding": "version",
                         "version": 2
                       },
+                      "camundaFormRef": {
+                        "key": "aCamundaFormKey",
+                        "binding": "version",
+                        "version": 2
+                      },
                       "tenantId": "aTenantId",
                       "taskState": "aTaskState"
                     }
@@ -36336,6 +38414,89 @@
                         "formKey": "embedded:app:develop/invoice-forms/approve-invoice.html",
                         "tenantId": null,
                         "taskState": "aTaskState",
+                        "attachment": false,
+                        "comment": false
+                      }
+                    ]
+                  },
+                  "example-3": {
+                    "summary": "GET /task/anId?withCommentAttachmentInfo\u003dtrue\u0026withTaskVariablesInReturn\u003dtrue\n                       Response",
+                    "value": [
+                      {
+                        "id": "349fffa8-6571-11e7-9a44-d6940f5ef88d",
+                        "name": "Approve Invoice",
+                        "assignee": "John Munda",
+                        "created": "2017-07-10T15:10:54.670+0200",
+                        "due": "2017-07-17T15:10:54.670+0200",
+                        "followUp": null,
+                        "lastUpdated": "2017-07-17T15:10:54.670+0200",
+                        "delegationState": null,
+                        "description": "Approve the invoice (or not).",
+                        "executionId": "349f8a5c-6571-11e7-9a44-d6940f5ef88d",
+                        "owner": null,
+                        "parentTaskId": null,
+                        "priority": 50,
+                        "processDefinitionId": "invoice:1:2c8d8057-6571-11e7-9a44-d6940f5ef88d",
+                        "processInstanceId": "349f8a5c-6571-11e7-9a44-d6940f5ef88d",
+                        "taskDefinitionKey": "approveInvoice",
+                        "caseExecutionId": null,
+                        "caseInstanceId": null,
+                        "caseDefinitionId": null,
+                        "suspended": false,
+                        "formKey": "embedded:app:develop/invoice-forms/approve-invoice.html",
+                        "tenantId": null,
+                        "taskState": "aTaskState",
+                        "variables": {
+                          "aVariableKey": {
+                            "type": "String",
+                            "value": "aVariableValue",
+                            "valueInfo": {}
+                          },
+                          "anotherVariableKey": {
+                            "type": "String",
+                            "value": "anotherVariableValue",
+                            "valueInfo": {}
+                          }
+                        },
+                        "attachment": false,
+                        "comment": false
+                      }
+                    ]
+                  },
+                  "example-4": {
+                    "summary": "GET /task/anId?withCommentAttachmentInfo\u003dtrue\u0026withTaskLocalVariablesInReturn\u003dtrue\n                       Response",
+                    "value": [
+                      {
+                        "id": "349fffa8-6571-11e7-9a44-d6940f5ef88d",
+                        "name": "Approve Invoice",
+                        "assignee": "John Munda",
+                        "created": "2017-07-10T15:10:54.670+0200",
+                        "due": "2017-07-17T15:10:54.670+0200",
+                        "followUp": null,
+                        "lastUpdated": "2017-07-17T15:10:54.670+0200",
+                        "delegationState": null,
+                        "description": "Approve the invoice (or not).",
+                        "executionId": "349f8a5c-6571-11e7-9a44-d6940f5ef88d",
+                        "owner": null,
+                        "parentTaskId": null,
+                        "priority": 50,
+                        "processDefinitionId": "invoice:1:2c8d8057-6571-11e7-9a44-d6940f5ef88d",
+                        "processInstanceId": "349f8a5c-6571-11e7-9a44-d6940f5ef88d",
+                        "taskDefinitionKey": "approveInvoice",
+                        "caseExecutionId": null,
+                        "caseInstanceId": null,
+                        "caseDefinitionId": null,
+                        "suspended": false,
+                        "formKey": "embedded:app:develop/invoice-forms/approve-invoice.html",
+                        "tenantId": null,
+                        "taskState": "aTaskState",
+                        "variables": {
+                          "anotherVariableKey": {
+                            "type": "String",
+                            "value": "anotherVariableValue",
+                            "valueInfo": {}
+                          }
+                        },
                         "attachment": false,
                         "comment": false
                       }
@@ -36552,6 +38713,58 @@
                         "rootProcessInstanceId": "aRootProcessInstanceId"
                       }
                     ]
+                  }
+                }
+              }
+            },
+            "description": "Request successful."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionDto"
+                }
+              }
+            },
+            "description": "No task exists for the given task id. See the [Introduction](/reference/rest/overview/#error-handling)\nfor the error response format."
+          }
+        }
+      }
+    },
+    "/task/{id}/attachment/count": {
+      "get": {
+        "operationId": "getAttachmentsCount",
+        "tags": [
+          "Task Attachment"
+        ],
+        "summary": "Get List Count",
+        "description": "Retrieves the number of task attachments by task id.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "The id of the task."
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CountResultDto"
+                },
+                "examples": {
+                  "example-1": {
+                    "summary": "GET /task/aTaskId/attachment/count",
+                    "description": "GET ``",
+                    "value": {
+                      "count": 2
+                    }
                   }
                 }
               }
@@ -37262,6 +39475,58 @@
               }
             },
             "description": "The authenticated user is unauthorized to update this resource. See the\n[Introduction](https://docs.fluxnova.finos.org/manual/develop/reference/rest/overview/#error-handling)\nfor the error response format."
+          }
+        }
+      }
+    },
+    "/task/{id}/comment/count": {
+      "get": {
+        "operationId": "getCommentsCount",
+        "tags": [
+          "Task Comment"
+        ],
+        "summary": "Get List Count",
+        "description": "Retrieves the number of task comments by task id.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "The id of the task."
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CountResultDto"
+                },
+                "examples": {
+                  "example-1": {
+                    "summary": "GET /task/aTaskId/comment/count",
+                    "description": "GET ``",
+                    "value": {
+                      "count": 2
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Request successful."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExceptionDto"
+                }
+              }
+            },
+            "description": "No task exists for the given task id. See the [Introduction](/reference/rest/overview/#error-handling)\nfor the error response format."
           }
         }
       }
@@ -42217,6 +44482,53 @@
           }
         }
       },
+      "AdHocActivitiesTriggerDto": {
+        "type": "object",
+        "description": "Trigger instructions for one or more ad hoc activities within an ad hoc scope.",
+        "properties": {
+          "activities": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/AdHocActivityTriggerInstructionDto"
+            },
+            "description": "A collection of ad hoc activities to trigger. Each entry specifies an activity id\r\nand optional variables to set in that activity."
+          }
+        }
+      },
+      "AdHocActivityTriggerInstructionDto": {
+        "type": "object",
+        "description": "A single ad hoc activity trigger instruction specifying which activity to trigger and optional variables.",
+        "properties": {
+          "activityId": {
+            "type": "string",
+            "nullable": true,
+            "description": "The id of the ad hoc activity to trigger within the ad hoc scope."
+          },
+          "variables": {
+            "type": "object",
+            "nullable": true,
+            "additionalProperties": {
+              "$ref": "#/components/schemas/VariableValueDto"
+            },
+            "description": "An optional JSON object containing variable key-value pairs to set in the triggered activity.\r\nEach key is a variable name and each value a JSON variable value object."
+          }
+        }
+      },
+      "AdHocSubProcessCompletionDto": {
+        "type": "object",
+        "description": "Request payload for completing an ad-hoc subprocess execution.",
+        "properties": {
+          "variables": {
+            "type": "object",
+            "nullable": true,
+            "additionalProperties": {
+              "$ref": "#/components/schemas/VariableValueDto"
+            },
+            "description": "Optional variables to set on the ad hoc subprocess execution before completion."
+          }
+        }
+      },
       "AnnotationDto": {
         "type": "object",
         "properties": {
@@ -42229,6 +44541,24 @@
       },
       "AnyValue": {
         "description": "Can be any value - string, number, boolean, array or object.\n **Note**: Not every endpoint supports every type."
+      },
+      "AssignTasksDto": {
+        "type": "object",
+        "properties": {
+          "taskIds": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "string"
+            },
+            "description": "The list of task ids for which task assignment needs to be done."
+          },
+          "userId": {
+            "type": "string",
+            "nullable": true,
+            "description": "The id of the user to which the task will be assigned."
+          }
+        }
       },
       "AtomLink": {
         "type": "object",
@@ -42301,6 +44631,11 @@
                 "type": "string",
                 "nullable": true,
                 "description": "The process instance id of the root process instance that initiated the process containing the task."
+              },
+              "createdBy": {
+                "type": "string",
+                "nullable": true,
+                "description": "The id of the user who created the attachment. Will be `null` if the attachment was created before this feature was introduced or if no authenticated user created the attachment."
               }
             }
           },
@@ -42671,6 +45006,27 @@
           }
         ]
       },
+      "CamundaFormRef": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "nullable": true,
+            "description": "The key of the Camunda Form."
+          },
+          "binding": {
+            "type": "string",
+            "nullable": true,
+            "description": "The binding of the Camunda Form. Can be `latest`, `deployment` or `version`."
+          },
+          "version": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true,
+            "description": "The specific version of a Camunda Form. This property is only set if `binding` is `version`."
+          }
+        }
+      },
       "CaseDefinitionDto": {
         "type": "object",
         "properties": {
@@ -42938,6 +45294,21 @@
           }
         ]
       },
+      "CompleteBulkTaskDto": {
+        "type": "object",
+        "properties": {
+          "taskId": {
+            "type": "string",
+            "nullable": true,
+            "description": "The task id."
+          },
+          "variables": {
+            "type": "object",
+            "nullable": true,
+            "description": "A JSON object containing variable key-value pairs."
+          }
+        }
+      },
       "CompleteExternalTaskDto": {
         "allOf": [
           {
@@ -42982,6 +45353,40 @@
             "nullable": true,
             "default": false,
             "description": "Indicates whether the response should contain the process variables or not. The\ndefault is `false` with a response code of `204`. If set to `true` the response\ncontains the process variables and has a response code of `200`. If the task is not\nassociated with a process instance (e.g. if it\u0027s part of a case instance) no\nvariables will be returned."
+          }
+        }
+      },
+      "CompleteTaskRequestDto": {
+        "type": "object",
+        "properties": {
+          "completeTasksDto": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/CompleteTasksDto"
+            },
+            "description": "A list that contains task ID\u0027s and its associated variables"
+          },
+          "withVariablesInReturn": {
+            "type": "boolean",
+            "nullable": true,
+            "default": false,
+            "description": "Indicates whether the response should contain the process variables or not. The\ndefault is `false` with a response code of `204`. If set to `true` the response\ncontains the process variables and has a response code of `200`. If the task is not\nassociated with a process instance (e.g. if it\u0027s part of a case instance) no\nvariables will be returned."
+          }
+        }
+      },
+      "CompleteTasksDto": {
+        "type": "object",
+        "properties": {
+          "taskId": {
+            "type": "string",
+            "nullable": true,
+            "description": "The task id."
+          },
+          "variables": {
+            "type": "object",
+            "nullable": true,
+            "description": "A JSON object containing variable key-value pairs."
           }
         }
       },
@@ -43139,6 +45544,19 @@
           }
         }
       },
+      "CreateCommentsDto": {
+        "type": "object",
+        "properties": {
+          "commentDto": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/CommentDto"
+            },
+            "description": ""
+          }
+        }
+      },
       "CreateFilterDto": {
         "type": "object",
         "properties": {
@@ -43276,28 +45694,28 @@
           "id": {
             "type": "string",
             "nullable": true,
-            "description": "The id of the decision requirements definition"
+            "description": "The id of the decision requirements definition."
           },
           "key": {
             "type": "string",
             "nullable": true,
-            "description": "The key of the decision requirements definition, i.e., the id of the DMN 1.0 XML decision definition."
-          },
-          "name": {
-            "type": "string",
-            "nullable": true,
-            "description": "The name of the decision requirements definition."
+            "description": "The key of the decision requirements definition."
           },
           "category": {
             "type": "string",
             "nullable": true,
             "description": "The category of the decision requirements definition."
           },
+          "name": {
+            "type": "string",
+            "nullable": true,
+            "description": "The name of the decision requirements definition."
+          },
           "version": {
             "type": "integer",
             "format": "int32",
             "nullable": true,
-            "description": "The version of the decision requirements definition that the engine assigned to it."
+            "description": "The version of the decision requirements definition that the engine assigned to\nit."
           },
           "resource": {
             "type": "string",
@@ -43312,7 +45730,7 @@
           "tenantId": {
             "type": "string",
             "nullable": true,
-            "description": "The tenant id of the decisionrequirements definition."
+            "description": "The tenant id of the decision requirements definition."
           }
         }
       },
@@ -43328,6 +45746,54 @@
             "type": "string",
             "nullable": true,
             "description": "An escaped XML string containing the XML that this decision requirements definition\nwas deployed with. Carriage returns, line feeds and quotation marks\nare escaped."
+          }
+        }
+      },
+      "DeleteDeploymentResponse": {
+        "type": "object",
+        "properties": {
+          "deploymentId": {
+            "type": "string",
+            "nullable": true,
+            "description": "The id of the deployment."
+          },
+          "status": {
+            "type": "string",
+            "nullable": true,
+            "description": "The status of the update operation."
+          },
+          "errorMessage": {
+            "type": "string",
+            "nullable": true,
+            "description": "The error details related to update operation failure."
+          }
+        }
+      },
+      "DeleteDeploymentsDto": {
+        "type": "object",
+        "properties": {
+          "deploymentIds": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "string"
+            },
+            "description": "The list of deployment ids to be deleted."
+          },
+          "cascade": {
+            "type": "boolean",
+            "nullable": true,
+            "description": "A flag indicating if all process instances, historic process instances and jobs for this deployment should be deleted."
+          },
+          "skipCustomListeners": {
+            "type": "boolean",
+            "nullable": true,
+            "description": "A flag indicating if only the built-in ExecutionListeners should be notified with the end event."
+          },
+          "skipIoMappings": {
+            "type": "boolean",
+            "nullable": true,
+            "description": "A flag indicating if all input/output mappings should not be invoked."
           }
         }
       },
@@ -44059,6 +46525,12 @@
             "type": "string",
             "nullable": true,
             "description": "The business key of the process instance the external task belongs to."
+          },
+          "createTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "The date that the task was created."
           }
         }
       },
@@ -44237,6 +46709,49 @@
             "format": "int64",
             "nullable": true,
             "description": "Only include jobs with a priority lower than or equal to the given value.\nValue must be a valid `long` value."
+          },
+          "processDefinitionKey": {
+            "type": "string",
+            "nullable": true,
+            "description": "Restrict to tasks that belong to a process definition with the given key."
+          },
+          "processDefinitionKeyIn": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "string"
+            },
+            "description": "Restrict to tasks that belong to a process definition with one of the given keys. The\nkeys need to be in a comma-separated list."
+          },
+          "processDefinitionName": {
+            "type": "string",
+            "nullable": true,
+            "description": "Restrict to tasks that belong to a process definition with the given name."
+          },
+          "processDefinitionNameLike": {
+            "type": "string",
+            "nullable": true,
+            "description": "Restrict to tasks that have a process definition name that has the parameter value as\na substring."
+          },
+          "variableNamesIgnoreCase": {
+            "type": "boolean",
+            "nullable": true,
+            "default": false,
+            "description": "Match all variable names in this query case-insensitively. If set\n`variableName` and `variablename` are treated as equal."
+          },
+          "variableValuesIgnoreCase": {
+            "type": "boolean",
+            "nullable": true,
+            "default": false,
+            "description": "Match all variable values in this query case-insensitively. If set\n`variableValue` and `variablevalue` are treated as equal."
+          },
+          "processVariables": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/VariableQueryParameterDto"
+            },
+            "description": "A JSON array to only include tasks that belong to a process instance with variables\nwith certain values. The array consists of JSON objects with three properties\n`name`, `operator` and `value`. `name` is the variable name, `operator` is the\ncomparison operator to be used and `value` the variable value. `value` may be of\ntype `String`, `Number` or `Boolean`.\n\nValid `operator` values are:\n`eq` - equal to;\n`neq` - not equal to;\n`gt` - greater than;\n`gteq` - greater than or equal to;\n`lt` - lower than;\n`lteq` - lower than or equal to;\n`like`;\n`notLike`.\n`key` and `value` may not contain underscore or comma characters."
           },
           "sorting": {
             "type": "array",
@@ -44510,6 +47025,9 @@
           },
           "fluxnovaFormRef": {
             "$ref": "#/components/schemas/FluxnovaFormRef"
+          },
+          "camundaFormRef": {
+            "$ref": "#/components/schemas/CamundaFormRef"
           },
           "contextPath": {
             "type": "string",
@@ -46789,6 +49307,11 @@
             "nullable": true,
             "description": "Restrict the query to all process instances that are top level process instances."
           },
+          "rootProcessInstanceId": {
+            "type": "string",
+            "nullable": true,
+            "description": "Filter by root process instance id."
+          },
           "finished": {
             "type": "boolean",
             "nullable": true,
@@ -48131,6 +50654,25 @@
           }
         }
       },
+      "JobActivateSuspendDto": {
+        "type": "object",
+        "description": "List of job ids.",
+        "properties": {
+          "jobIds": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "string"
+            },
+            "description": "List of job ids."
+          },
+          "suspended": {
+            "type": "boolean",
+            "nullable": true,
+            "description": "Supply true for suspending and false for activating."
+          }
+        }
+      },
       "JobConditionQueryParameterDto": {
         "type": "object",
         "properties": {
@@ -48383,6 +50925,20 @@
           }
         ]
       },
+      "JobDeletionDto": {
+        "type": "object",
+        "description": "List of job ids to delete.",
+        "properties": {
+          "jobIds": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "string"
+            },
+            "description": "List of job ids for deletion."
+          }
+        }
+      },
       "JobDto": {
         "type": "object",
         "properties": {
@@ -48634,6 +51190,11 @@
             "nullable": true,
             "description": "Include jobs which belong to no tenant. Can be used in combination with `tenantIdIn`.\nValue may only be `true`, as `false` is the default behavior."
           },
+          "acquired": {
+            "type": "boolean",
+            "nullable": true,
+            "description": "Only select jobs which are acquired, i.e.,  lock expiration date is not null, lock expiration\ndate is in future. Value may only be `true`, as `false` is the default\nbehavior. This does not take account if the job is suspended. This filter can be used with the\nsuspension filter."
+          },
           "sorting": {
             "type": "array",
             "nullable": true,
@@ -48688,6 +51249,26 @@
             "$ref": "#/components/schemas/RetriesDto"
           }
         ]
+      },
+      "JobSuspensionResponse": {
+        "type": "object",
+        "properties": {
+          "jobId": {
+            "type": "string",
+            "nullable": true,
+            "description": "The id of the job."
+          },
+          "status": {
+            "type": "string",
+            "nullable": true,
+            "description": "The status of the update operation."
+          },
+          "errorMessage": {
+            "type": "string",
+            "nullable": true,
+            "description": "The error details related to update operation failure."
+          }
+        }
       },
       "JobSuspensionStateDto": {
         "allOf": [
@@ -48866,6 +51447,19 @@
               "$ref": "#/components/schemas/VariableValueDto"
             },
             "description": "A JSON object containing a property for each of the requested variables. The key is the variable name,\nthe value is a JSON object of serialized variable values with the following properties:"
+          },
+          "extensionProperties": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "A JSON object containing a property for each extension property. The key is the property name,\nthe value is the property value"
+          },
+          "createTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "The date that the task was created."
           }
         }
       },
@@ -49600,6 +52194,54 @@
             "type": "string",
             "nullable": true,
             "description": "The name of the process engine."
+          },
+          "displayName": {
+            "type": "string",
+            "nullable": true,
+            "description": "The display name of the process engine. Only present when set in engine."
+          },
+          "group": {
+            "type": "string",
+            "nullable": true,
+            "description": "The group name of the process engine. Only present when set in engine."
+          },
+          "groupDisplayName": {
+            "type": "string",
+            "nullable": true,
+            "description": "The group display name of the process engine. Only present when set in engine."
+          }
+        }
+      },
+      "ProcessInstanceCountRequestDto": {
+        "type": "object",
+        "description": "List of process definition ids.",
+        "properties": {
+          "processDefinitionIds": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "string"
+            },
+            "description": "List of process definition ids."
+          },
+          "active": {
+            "type": "boolean",
+            "nullable": true,
+            "description": "Only include active process instances. Value may only be true,\nas false is the default behavior."
+          }
+        }
+      },
+      "ProcessInstanceCountStatisticsDto": {
+        "type": "object",
+        "properties": {
+          "processDefinitionId": {
+            "type": "string",
+            "nullable": true,
+            "description": "Process definition id"
+          },
+          "instanceCount": {
+            "type": "number",
+            "description": "Active instance count of the process definition id"
           }
         }
       },
@@ -49655,6 +52297,34 @@
             "$ref": "#/components/schemas/LinkableDto"
           }
         ]
+      },
+      "ProcessInstanceIncidentCountRequestDto": {
+        "type": "object",
+        "description": "List of process instance ids.",
+        "properties": {
+          "processInstanceIds": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "string"
+            },
+            "description": "List of process instance ids."
+          }
+        }
+      },
+      "ProcessInstanceIncidentCountStatisticsDto": {
+        "type": "object",
+        "properties": {
+          "processInstanceId": {
+            "type": "string",
+            "nullable": true,
+            "description": "Process instance id"
+          },
+          "incidentCount": {
+            "type": "number",
+            "description": "Incident count of the process instance id"
+          }
+        }
       },
       "ProcessInstanceModificationDto": {
         "type": "object",
@@ -50585,6 +53255,34 @@
           }
         }
       },
+      "TaskCompleteResponseDto": {
+        "type": "object",
+        "properties": {
+          "variables": {
+            "type": "object",
+            "nullable": true,
+            "additionalProperties": {
+              "$ref": "#/components/schemas/VariableValueDto"
+            },
+            "description": "A JSON object containing variable key-value pairs. Each key is a variable name and\neach value a JSON variable value object."
+          },
+          "taskId": {
+            "type": "string",
+            "nullable": true,
+            "description": "The task ids for which task update needs to be done."
+          },
+          "status": {
+            "type": "string",
+            "nullable": true,
+            "description": "The status of the update operation."
+          },
+          "errorMessage": {
+            "type": "string",
+            "nullable": true,
+            "description": "The error details related to update operation failure."
+          }
+        }
+      },
       "TaskCountByCandidateGroupResultDto": {
         "type": "object",
         "properties": {
@@ -50598,6 +53296,24 @@
             "format": "int32",
             "nullable": true,
             "description": "The number of tasks which have the group name as candidate group."
+          }
+        }
+      },
+      "TaskCreateCommentResponse": {
+        "type": "object",
+        "properties": {
+          "commentInfo": {
+            "$ref": "#/components/schemas/CommentDto"
+          },
+          "status": {
+            "type": "string",
+            "nullable": true,
+            "description": "The status of the update operation."
+          },
+          "errorMessage": {
+            "type": "string",
+            "nullable": true,
+            "description": "The error details related to update operation failure."
           }
         }
       },
@@ -50720,6 +53436,9 @@
           },
           "fluxnovaFormRef": {
             "$ref": "#/components/schemas/FluxnovaFormRef"
+          },
+          "camundaFormRef": {
+            "$ref": "#/components/schemas/CamundaFormRef"
           },
           "tenantId": {
             "type": "string",
@@ -51015,6 +53734,14 @@
               "type": "string"
             },
             "description": "Restrict to tasks that have one of the given keys. The keys need to be in a comma-separated list."
+          },
+          "taskDefinitionKeyNotIn": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "string"
+            },
+            "description": "Exclude instances by a list of task definition keys. The keys need to be in a comma-separated list."
           },
           "taskDefinitionKeyLike": {
             "type": "string",
@@ -51352,6 +54079,39 @@
           }
         }
       },
+      "TaskUpdateDtoRequest": {
+        "type": "object",
+        "properties": {
+          "taskDto": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/TaskDto"
+            },
+            "description": ""
+          }
+        }
+      },
+      "TaskUpdateResponse": {
+        "type": "object",
+        "properties": {
+          "taskId": {
+            "type": "string",
+            "nullable": true,
+            "description": "The task ids for which task update needs to be done."
+          },
+          "status": {
+            "type": "string",
+            "nullable": true,
+            "description": "The status of the update operation."
+          },
+          "errorMessage": {
+            "type": "string",
+            "nullable": true,
+            "description": "The error details related to update operation failure."
+          }
+        }
+      },
       "TaskWithAttachmentAndCommentDto": {
         "allOf": [
           {
@@ -51370,9 +54130,47 @@
             }
           },
           {
+            "$ref": "#/components/schemas/TaskWithVariablesDto"
+          }
+        ]
+      },
+      "TaskWithVariablesDto": {
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "variables": {
+                "type": "object",
+                "nullable": true,
+                "additionalProperties": {
+                  "$ref": "#/components/schemas/VariableValueDto"
+                },
+                "description": "Holds the appropriate variables for the task."
+              }
+            }
+          },
+          {
             "$ref": "#/components/schemas/TaskDto"
           }
         ]
+      },
+      "TasksAssignDto": {
+        "type": "object",
+        "properties": {
+          "taskIds": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "string"
+            },
+            "description": "The list of task ids for which task assignment needs to be done."
+          },
+          "userIdDto": {
+            "type": "object",
+            "nullable": true,
+            "description": "The id of the user to which the task will be assigned."
+          }
+        }
       },
       "TelemetryConfigurationDto": {
         "type": "object",
@@ -52008,7 +54806,7 @@
           "valueInfo": {
             "type": "object",
             "additionalProperties": true,
-            "description": "A JSON object containing additional, value-type-dependent properties.\nFor serialized variables of type Object, the following properties can be provided:\n\n* `objectTypeName`: A string representation of the object\u0027s type name.\n* `serializationDataFormat`: The serialization format used to store the variable.\n\nFor serialized variables of type File, the following properties can be provided:\n\n* `filename`: The name of the file. This is not the variable name but the name that will be used when downloading the file again.\n* `mimetype`: The MIME type of the file that is being uploaded.\n* `encoding`: The encoding of the file that is being uploaded.\n\nThe following property can be provided for all value types:\n\n* `transient`: Indicates whether the variable should be transient or\nnot. See [documentation](https://docs.fluxnova.finos.org/manual/develop/user-guide/process-engine/variables#transient-variables) for more informations.\n(Not applicable for `decision-definition`, ` /process-instance/variables-async`, and `/migration/executeAsync` endpoints)"
+            "description": "A JSON object containing additional, value-type-dependent properties.\nFor serialized variables of type Object, the following properties can be provided:\n\n* `objectTypeName`: A string representation of the object\u0027s type name.\n* `serializationDataFormat`: The serialization format used to store the variable.\n\nFor serialized variables of type File, the following properties can be provided:\n\n* `filename`: The name of the file. This is not the variable name but the name that will be used when downloading the file again.\n* `mimetype`: The MIME type of the file that is being uploaded.\n* `encoding`: The encoding of the file that is being uploaded.\n\nThe following properties can be provided for all value types:\n\n* `transient`: Indicates whether the variable should be transient or\nnot. See [documentation](https://docs.fluxnova.finos.org/manual/develop/user-guide/process-engine/variables#transient-variables) for more informations.\n(Not applicable for `decision-definition`, ` /process-instance/variables-async`, and `/migration/executeAsync` endpoints)\n* `restricted`: A boolean flag that marks the variable as restricted. Restricted variables require appropriate authorization to be read and may also prevent writes. See documentation for more information."
           }
         }
       },
