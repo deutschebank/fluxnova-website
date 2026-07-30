@@ -113,7 +113,7 @@
       "name": "Historic Decision Requirements Definition"
     },
     {
-      "name": "Historic Detail"
+      "name": "Historic Detail API"
     },
     {
       "name": "Historic External Task Log"
@@ -14700,7 +14700,7 @@
       "get": {
         "operationId": "getHistoricDetails",
         "tags": [
-          "Historic Detail"
+          "Historic Detail API"
         ],
         "summary": "Get Historic Details",
         "description": "Queries for historic details that fulfill the given parameters.\nThe size of the result set can be retrieved by using the\n[Get Historic Detail Count](https://docs.fluxnova.finos.org/manual/develop/reference/rest/history/detail/get-detail-query-count/) method.",
@@ -15008,7 +15008,7 @@
       "post": {
         "operationId": "queryHistoricDetails",
         "tags": [
-          "Historic Detail"
+          "Historic Detail API"
         ],
         "summary": "Get Historic Details (POST)",
         "description": "Queries for historic details that fulfill the given parameters. This method is slightly more\npowerful than the [Get Historic Details](https://docs.fluxnova.finos.org/manual/develop/reference/rest/history/detail/get-detail-query/)\nmethod because it allows sorting by multiple parameters. The size of the result set can be retrieved by\nusing the [Get Historic Detail Count](https://docs.fluxnova.finos.org/manual/develop/reference/rest/history/detail/get-detail-query-count/)\nmethod.",
@@ -15159,7 +15159,7 @@
       "get": {
         "operationId": "getHistoricDetailsCount",
         "tags": [
-          "Historic Detail"
+          "Historic Detail API"
         ],
         "summary": "Get Historic Detail Count",
         "description": "Queries for the number of historic details that fulfill the given parameters.\nTakes the same parameters as the [Get Historic\nDetails](https://docs.fluxnova.finos.org/manual/develop/reference/rest/history/detail/get-detail-query/)\nmethod.",
@@ -15356,7 +15356,7 @@
       "get": {
         "operationId": "historicDetail",
         "tags": [
-          "Historic Detail"
+          "Historic Detail API"
         ],
         "summary": "Get Historic Detail",
         "description": "Retrieves a historic detail by id.",
@@ -15440,7 +15440,7 @@
       "get": {
         "operationId": "historicDetailBinary",
         "tags": [
-          "Historic Detail"
+          "Historic Detail API"
         ],
         "summary": "Get Historic Detail (Binary)",
         "description": "Retrieves the content of a historic variable update by id. Applicable for byte\narray and file variables.",
