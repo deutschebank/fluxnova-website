@@ -15,25 +15,6 @@ export default {
                         type: "generated-index",
                         title: "Fluxnova API",
                     },
-                },
-                {
-                    type: 'category',
-                    label: 'Releases',
-                    link: {
-                        type: "generated-index",
-                        title: "Releases",
-                        description: "A list of Fluxnova Releases",
-                    },
-                    items: [
-                        {
-                            type: 'doc',
-                            id: 'releases/v1.0.0'
-                        },
-                        {
-                            type: 'doc',
-                            id: 'releases/v2.0.0'
-                        }
-                    ]
                 }
             ]
         },
